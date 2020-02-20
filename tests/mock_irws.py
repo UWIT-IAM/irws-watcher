@@ -17,7 +17,10 @@ from resttools.models.irws import Pac
 from resttools.exceptions import DataFailureException, InvalidIRWSName
 from resttools.exceptions import ResourceNotFound, BadInput
 
+put_pacs = []
+
 class IRWS(object):
+
 
     def __init__(self, conf):
 
@@ -72,6 +75,7 @@ class IRWS(object):
         sponsored.fname = data.sponsored[id]['fname']
         sponsored.lname = data.sponsored[id]['lname']
         sponsored.contact_email = data.sponsored[id]['contact_email']
+        return sponsored
 
     def get_pdsentry_by_netid(self, netid):
         pds = PDSEntry()
@@ -103,15 +107,12 @@ class IRWS(object):
         return None
 
     def put_pac(self, id, source=None):
-        id = self._clean(eid)
+        id = self._clean(id)
         source = self._clean(source)
         if id not in data.pac:
             return None
         pac = Pac
         pac.pac = data.pac[id]['pac']
         pac.expiration = data.pac[id]['expiration']
-        self._pac = pac.pac
+        put_pacs.append(pac.pac)
         return pac
-
-    def was_put_pac(self):
-        return self._pac

@@ -21,6 +21,14 @@ IRWS_CONF = {
     'SOCKET_TIMEOUT':  65.0,
 }
 
+PAC_CONF = {
+    'SMTP_SERVER': 'some-smtp-server',
+    'EMAIL_HEADERS': 'templates/email_headers',
+    'EMAIL_PLAIN': 'templates/email_plain',
+    'EMAIL_HTML': 'templates/email_html',
+    'EMAIL_PAC': True,
+}
+
 # augment handlers' configs
 for conf in (GWS_CONF, IRWS_CONF):
     if 'RUN_MODE' not in conf:

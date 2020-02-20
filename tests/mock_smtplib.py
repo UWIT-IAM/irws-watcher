@@ -1,18 +1,22 @@
 # mock smtplib SMTP client
 
+conf = None
+num_calls = 0
+m_from = []
+m_recip = []
+m_msg = []
+
 class SMTP():
 
-    def __init__(self, conf):
-        self._conf = conf
+    def __init__(self, conf=None):
+        conf = conf
 
     def sendmail(self, fromaddr, recip, msg):
-        self._from = fromaddr
-        self._recip = recip
-        self._msg = msg
+        global num_calls
+        m_from.append(fromaddr)
+        m_recip.append(recip)
+        m_msg.append(msg)
+        num_calls += 1
 
-    def was_init(self):
-        return self._conf
-
-    def was_sendmail(self):
-        return (self._from, self._recip, self._msg)
-        
+    def usage(self):
+        return (num_calls, m_from, m_recip, m_msg)

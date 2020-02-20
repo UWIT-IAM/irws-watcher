@@ -5,14 +5,6 @@ SETTINGS_NAME = 'Test configuration'
 import os
 settings_path = os.path.dirname(os.path.abspath(__file__))
 
-# pac settings
-DISABLE_EMAIL_PAC = False
-SMTP_SERVER = 'appsubmit.cac.washington.edu'
-PAC_EMAIL_HEADERS = 'templates/emp_email_headers'
-PAC_EMAIL_PLAIN = 'templates/emp_email_plain'
-PAC_EMAIL_HTML = 'templates/emp_email_html'
-
-
 DEFAULT_CERT_FILE = '../certs/test-2048.crt'
 DEFAULT_KEY_FILE = '../certs/test-2048.key'
 DEFAULT_CA_FILE = '../certs/test-ca.crt'
@@ -20,14 +12,22 @@ DEFAULT_CA_FILE = '../certs/test-ca.crt'
 FILTER_FILE = settings_path + '/data/PersonRegGroupDefs.xml'
 
 GWS_CONF = {
-    'HOST':  'https://groups.uw.edu',
+    'HOST':  'https://some-server.uw.edu',
     'SOCKET_TIMEOUT':  900.0,
 }
 
 IRWS_CONF = {
-    'HOST':  'https://mango.u.washington.edu:646',
+    'HOST':  'https://some-server.u.washington.edu',
     'SERVICE_NAME': 'registry',
     'SOCKET_TIMEOUT':  65.0,
+}
+
+PAC_CONF = {
+    'SMTP_SERVER': 'some-smtp-server.cac.washington.edu',
+    'EMAIL_HEADERS': 'tests/templates/email_headers',
+    'EMAIL_PLAIN': 'tests/templates/email_plain',
+    'EMAIL_HTML': 'tests/templates/email_html',
+    'EMAIL_PAC': True,
 }
 
 # augment handlers' configs

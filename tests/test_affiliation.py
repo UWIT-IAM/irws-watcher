@@ -33,11 +33,9 @@ def test_process_affiliations_as_needed_id1():
     (adds, dels) = affiliation.process_affiliations_as_needed('netid1')
 
     for cn in adds:
-        print('add: ' + cn)
         assert cn in irws_data.member['netid1']
         assert cn not in gws_data.member['netid1']
     for cn in dels:
-        print('del: ' + cn)
         assert cn not in irws_data.member['netid1']
         assert cn in gws_data.member['netid1']
     

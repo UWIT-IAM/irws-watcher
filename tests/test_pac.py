@@ -17,6 +17,7 @@ logger = logging.getLogger('stdout')
 
 pac.logger = logger
 pac.irws = IRWS(settings.IRWS_CONF)
+pac.conf = settings.PAC_CONF
 
 @patch('smtplib.SMTP', side_effect=SMTP)
 def test_process_pac_as_needed_id1(object):
@@ -36,4 +37,6 @@ def test_process_pac_as_needed_id1(object):
     # test needs netid
     ret = pac.process_pac_as_needed('regid4')
     assert ret
-    
+    z = SMTP()
+    (num, froms, tos, msgs) = z.usage()
+    assert num == 1

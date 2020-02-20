@@ -21,9 +21,13 @@ from resttools.exceptions import DataFailureException
 # these must be set by importer
 logger = None
 irws = None
-
+conf = None
 
 # process a template file with substitutions
+
+templateLoader = jinja2.FileSystemLoader(searchpath="./")
+templateEnv = jinja2.Environment(loader=templateLoader)
+
 def _data_from_template(tmpl, info):
     template = templateEnv.get_template(tmpl)
     return template.render(info)
@@ -92,15 +96,15 @@ def process_pac_as_needed(regid):
             logger.info('PAC for %s, already active' % regid)
             return False
 
-        # if DISABLE_EMAIL_PAC is set and we got to this point then log and exit
-        if settings.DISABLE_EMAIL_PAC:
-            logger.info('PAC for %s needed, sending PACs turned off' % regid)
-            return False
-    
         if len(sponsored.contact_email) == 0:
             logger.info('PAC for %s needed, but no contact email' % regid)
             return False
 
+        # if conf['EMAIL_PAC'] is false and we got to this point then log and exit
+        if not conf['EMAIL_PAC']:
+            logger.info('PAC for %s needed, sending PACs turned off' % regid)
+            return False
+    
         info = {}
         recipients = []
 
@@ -118,13 +122,13 @@ def process_pac_as_needed(regid):
         info['pac_exp'] = re.sub(':..$', '', pac.expiration)
 
         msg = MIMEMultipart('alternative')
-        sender = smtplib.SMTP(settings.SMTP_SERVER)
+        sender = smtplib.SMTP(conf['SMTP_SERVER'])
 
         # send pac to user 
-        hdrs = Parser().parsestr(_data_from_template(settings.PAC_EMAIL_HEADERS, info))
+        hdrs = Parser().parsestr(_data_from_template(conf['EMAIL_HEADERS'], info))
         _make_msg_headers(msg, hdrs)
-        t_html = MIMEText(_data_from_template(settings.PAC_EMAIL_HTML, info), 'html')
-        t_text = MIMEText(_data_from_template(settings.PAC_EMAIL_PLAIN, info), 'plain')
+        t_html = MIMEText(_data_from_template(conf['EMAIL_HTML'], info), 'html')
+        t_text = MIMEText(_data_from_template(conf['EMAIL_PLAIN'], info), 'plain')
 
         msg.attach(t_html)
         msg.attach(t_text)
@@ -133,6 +137,6 @@ def process_pac_as_needed(regid):
         logger.debug('sending pac: regid=%s, contact_email=%s' % (regid, info['email']))
         if len(recipients) > 0:
             sender.sendmail(hdrs['From'], recipients, msg.as_string())
-        audit_logger.info('msg: send pac: eid=%s, emp_email=%s' % (eid, user_email))
+        logger.info('msg: send pac: id=%s, email=%s' % (regid, info['email']))
 
     return True

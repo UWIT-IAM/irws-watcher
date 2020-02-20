@@ -49,13 +49,6 @@ irws_client = None
 gws_client = None
 aws_client = None
 
-
-# process a template file with substitutions
-def _data_from_template(tmpl, info):
-    template = templateEnv.get_template(tmpl)
-    return template.render(info)
-
-
 #
 # Process a message
 # returns True unless recoverable error
@@ -154,6 +147,7 @@ crypt_init(settings.IAM_CONF)
 
 pac.logger = logger
 pac.irws = irws_client
+pac.conf = settings.PAC_CONF
 
 affiliation.logger = logger
 affiliation.irws = irws_client
