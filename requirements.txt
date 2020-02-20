@@ -1,0 +1,13 @@
+-e git+https://github.com/UWIT-IAM/iam-resttools@python3#egg=resttools
+-e git+https://github.com/UWIT-IAM/iam-messaging@uwit-1#egg=messagetools
+urllib3
+lxml
+python-dateutil
+m2crypto
+boto
+jinja2
+pytest
+pycodestyle
+mock
+coverage
+six

@@ -1,0 +1,110 @@
+RUN_MODE = 'Live'
+
+SETTINGS_NAME = 'Eval configuration'
+
+DEFAULT_CERT_FILE = 'some.crt'
+DEFAULT_KEY_FILE = 'some.key'
+DEFAULT_CA_FILE = 'some-cacerts.cert'
+
+FILTER_FILE = '../data/PersonRegGroupDefs.xml'
+
+GWS_CONF = {
+    'HOST':  'base-url',
+    'SOCKET_TIMEOUT':  900.0,
+    'CERT_FILE': 'some.crt'
+    'KEY_FILE': 'some.key'
+}
+
+IRWS_CONF = {
+    'HOST':  'base-url',
+    'SERVICE_NAME': 'registry-xxx',
+    'SOCKET_TIMEOUT':  65.0,
+}
+
+# augment handlers' configs
+for conf in (GWS_CONF, IRWS_CONF):
+    if 'RUN_MODE' not in conf:
+        conf['RUN_MODE'] = RUN_MODE
+    if 'CERT_FILE' not in conf:
+        conf['CERT_FILE'] = DEFAULT_CERT_FILE
+    if 'KEY_FILE' not in conf:
+        conf['KEY_FILE'] = DEFAULT_KEY_FILE
+    if 'CA_FILE' not in conf:
+        conf['CA_FILE'] = DEFAULT_CA_FILE
+
+
+# AWS_CONF  &  IAM_CONF
+exec(open('/some-other-path/settings-eval.py').read())
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'plain': {
+            'format': '%(message)s'
+        },
+        'plaintime': {
+            'format': '%(asctime)s: %(message)s'
+        },
+        'syslog': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'handlers': {
+        'stdout': {
+            'class': 'logging.StreamHandler',
+            'level': 'DEBUG',
+            'stream': 'ext://sys.stdout',
+            'formatter': 'plain',
+        },
+        'syslog': {
+            'class': 'logging.handlers.SysLogHandler',
+            'level': 'DEBUG',
+            'formatter': 'syslog',
+            'facility': 'LOG_LOCAL7'
+        },
+        'runlog': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'level': 'DEBUG',
+            'formatter': 'syslog',
+            'filename': '/some-path/process.log',
+            'when': 'midnight'
+        },
+        'audits': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'level': 'INFO',
+            'formatter': 'plaintime',
+            'filename': '/some-path/audit.log',
+        },
+    },
+    'loggers': {
+      'root': {
+        'level': 'INFO',
+        'handlers': ['runlog', 'stdout'],
+      },
+      'activity': {
+        'level': 'INFO',
+        'handlers': ['runlog'],
+      },
+      'activity-verbose': {
+        'level': 'DEBUG',
+        'handlers': ['runlog', 'stdout'],
+      },
+      'message': {
+        'level': 'DEBUG',
+        'handlers': ['runlog'],
+      },
+      'recon': {
+        'level': 'WARN',
+        'handlers': ['runlog'],
+      },
+      'verify': {
+        'level': 'DEBUG',
+        'handlers': ['stdout'],
+      },
+      'audit': {
+        'level': 'DEBUG',
+        'handlers': ['audits']
+      },
+    }
+
+}

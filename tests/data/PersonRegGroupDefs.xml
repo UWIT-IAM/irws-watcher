@@ -1,0 +1,1086 @@
+<?xml version='1.0'?>
+<groupDefs>
+
+  <group cn="uw_affiliation_undergraduate">
+     <title>UW Undergraduate Students</title>
+     <gname>UW Undergraduate Students</gname>
+     <classification>restricted</classification>
+     <memberViewers>
+       <viewer>cn="uw_employee"</viewer>
+       <viewer>cn="u_groups_affiliation_student-read"</viewer>
+     </memberViewers>
+     <desc>UW students who are identified as undergraduates. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+         <category-status>
+           <value>1-1</value>
+           <value>1-2</value>
+         </category-status>
+       </filter>
+     </realtime>
+     <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c 
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_graduate">
+    <title>UW Graduate Students</title>
+    <gname>UW Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <desc>UW students who are identified as graduate students, including professional degree programs (Dentistry, Law, Medicine, etc.) and approved on-leave graduate students. Membership includes 90 days of grace status. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c 
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 2 
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_graduate-current">
+    <title>UW Graduate Students - Current</title>
+    <gname>UW Graduate Students - Current</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="uw_employee"</viewer>
+       <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <desc>UW students who are identified as graduate students for the current quarter only, including approved on-leave graduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+        </category-status>
+        <sdb-sdb_status>
+          <value>E</value>
+          <value>L</value>
+        </sdb-sdb_status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code = 1
+JOIN verify sdb_status
+  on sdb_status.validation_id = u.validation_id
+  and sdb_status.verify_code = 127
+  and sdb_status.source_code = 2
+  and sdb_status.verify_data in ('E','L')
+ORDER by u.uwnetid;</query>
+  </group> 
+
+
+
+  <group cn="uw_affiliation_graduate-grad">
+    <title>UW Graduate Students - Graduate</title>
+    <gname>UW Graduate Students - Graduate</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <desc>UW students who are identified as graduate students, including approved on-leave graduate students. Membership includes 90 days of grace status. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+           <value>2-1</value>
+           <value>2-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>08</value>
+        </sdb-sdb_class>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code != 3
+JOIN verify sdb_class
+  on sdb_class.validation_id = u.validation_id
+  and sdb_class.verify_code = 126
+  and sdb_class.source_code = 2
+  and sdb_class.verify_data = '08' 
+ORDER by u.uwnetid;</query>
+  </group>
+
+
+  <group cn="uw_affiliation_seattle-student-undergraduate">
+    <title>UW Seattle Undergraduate Students</title>
+    <gname>UW Seattle Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Seattle students who are identified as undergraduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>0</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30 
+  and c.category_code = 1 
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '0'
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_seattle-student-graduate">
+    <title>UW Seattle Graduate Students</title>
+    <gname>UW Seattle Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Seattle students who are identified as graduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>0</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30 
+  and c.category_code = 2 
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '0'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_bothell-student-undergraduate">
+    <title>UW Bothell Undergraduate Students</title>
+    <gname>UW Bothell Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Bothell students who are identified as undergraduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>1</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '1'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_bothell-student-graduate">
+    <title>UW Bothell Graduate Students</title>
+    <gname>UW Bothell Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Bothell students who are identified as graduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>1</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '1'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_tacoma-student-undergraduate">
+    <title>UW Tacoma Undergraduate Students</title>
+    <gname>UW Tacoma Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Tacoma students who are identified as undergraduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>2</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '2'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_tacoma-student-graduate">
+    <title>UW Tacoma Graduate Students</title>
+    <gname>UW Tacoma Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <desc>UW Tacoma students who are identified as graduate students. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>2</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code != 3 
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '2'
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_uw-medicine-workforce">
+    <title>UW Medicine Workforce Members</title>
+    <gname>UW Medicine Workforce Members</gname>
+    <memberViewers>
+       <viewer>dns="app-mychem.admin.washington.edu"</viewer>
+       <viewer>dns="appdev-mychem.admin.washington.edu"</viewer>
+       <viewer>dns="useraudit-vmp-utility.mcis.washington.edu"</viewer>
+       <viewer>cn="u_groups_affiliation_uwmedicine-read"</viewer>
+       <viewer>dns="courseaccess.cac.washington.edu"</viewer>
+    </memberViewers>
+    <desc>Members of the UW Medicine Workforce that use clinical applications as identified by UW Medicine IT Services User Access Administration (uaa@u.washington.edu).  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>13-1</value>
+          <value>13-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 13
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_staff-employee">
+    <title>UW Staff Employees</title>
+    <gname>UW Staff Employees</gname>
+    <desc>UW staff.  Excludes student employee appointments. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+    </memberViewers>
+    <contact>iam-support</contact>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>4-1</value>
+          <value>4-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 4
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_student-employee">
+    <title>UW Student Employees</title>
+    <gname>UW Student Employees</gname>
+    <desc>UW student employees.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>14-1</value>
+          <value>14-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 14
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_affiliate-employee">
+    <title>UW Affiliate Employees</title>
+      <gname>UW Affiliate Employees</gname>
+    <desc>UW affiliates who work on campus at least 3 days a week but are not paid through UW Payroll.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+      <viewer>dns="rebate.bookstore.washington.edu"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>15-1</value>
+          <value>15-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 15
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_alumni">
+    <title>UW Alumni</title>
+    <gname>UW Alumni</gname>
+    <desc>Alumni of the UW.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>16-1</value>
+          <value>16-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 16
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uw-medicine-affiliate">
+    <title>UW Medicine Non-Workforce</title>
+    <gname>UW Medicine Non-Workforce</gname>
+    <desc>UW Medicine Non-Workforce that use clinical applications as identified by UW Medicine IT Services User Access Administration (uaa@u.washington.edu).  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+       <viewer>cn="u_groups_affiliation_uwmedicine-read"</viewer>
+       <viewer>dns="app-mychem.admin.washington.edu"</viewer>
+       <viewer>dns="appdev-mychem.admin.washington.edu"</viewer>
+       <viewer>dns="courseaccess.cac.washington.edu"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>17-1</value>
+          <value>17-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 17
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_extension-student">
+    <title>UW Extension Students</title>
+    <gname>UW Extension Students</gname>
+    <desc>Students who are in the Professional &amp;amp; Continuing Education program.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code in (18,19)
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_applicant">
+    <title>UW Applicants</title>
+    <gname>UW Applicants</gname>
+    <desc>Applicants for admission to the UW.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>20-1</value>
+          <value>20-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 20
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <!-- group cn="uw_affiliation_development-affiliate">
+     <title>UW Development Affiliates</title>
+     <gname>UW Development Affiliates</gname>
+     <desc>Friends of the UW as identified by the Advancement database.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_read-access"</viewer>
+     </memberViewers>
+     <query>select distinct u.uwnetid from category c, uwnetid u where u.validation_id=c.validation_id and c.category_code=28 and c.status_code!=3 and u.status_code=30;</query>
+  </group -->
+
+
+  <group cn="uw_affiliation_cascadia-user">
+    <title>Cascadia Community College Members</title>
+    <gname>Cascadia Community College Members</gname>
+    <desc>Employees and students of Cascadia Community College.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_cascadia-student">
+    <title>Cascadia Community College Students</title>
+    <gname>Cascadia Community College Students</gname>
+    <desc>Students of Cascadia Community College.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+        <cascadia-department>
+          <value>STU</value>
+        </cascadia-department>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code != 3
+JOIN verify cascadia_dept
+  on cascadia_dept.validation_id=u.validation_id
+  and cascadia_dept.verify_code = 117
+  and cascadia_dept.source_code = 8
+  and cascadia_dept.verify_data = 'STU'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_cascadia-employee">
+    <title>Cascadia Community College Employees</title>
+    <gname>Cascadia Community College Employees</gname>
+    <desc>Employees of Cascadia Community College.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+        <cascadia-department>
+          <value>STU</value>
+        </cascadia-department>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code != 3
+JOIN verify cascadia_dept
+  on cascadia_dept.validation_id=u.validation_id
+  and cascadia_dept.verify_code = 117
+  and cascadia_dept.source_code = 8
+  and cascadia_dept.verify_data = 'EMP'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_scca-employee">
+     <title>Seattle Cancer Care Alliance Employees</title>
+     <gname>Seattle Cancer Care Alliance Employees</gname>
+     <desc>Employees of Seattle Cancer Care Alliance.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_scca-read"</viewer>
+     </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>53-1</value>
+          <value>53-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 53
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_scca-affiliate">
+     <title>Seattle Cancer Care Alliance Affiliates</title>
+     <gname>Seattle Cancer Care Alliance Affiliates</gname>
+     <desc>Affiliates of Seattle Cancer Care Alliance.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_scca-read"</viewer>
+     </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>54-1</value>
+          <value>54-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 54
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_fhcrc-employee">
+     <title>Fred Hutchinson Cancer Research Center Employees</title>
+     <gname>Fred Hutchinson Cancer Research Center Employees</gname>
+     <desc>Employees of Fred Hutchinson Cancer Research Center.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_fhcrc-read"</viewer>
+     </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>55-1</value>
+          <value>55-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 55
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_fhcrc-affiliate">
+     <title>Fred Hutchinson Cancer Research Center Affiliates</title>
+     <gname>Fred Hutchinson Cancer Research Center Affiliates</gname>
+     <desc>Affiliates of Fred Hutchinson Cancer Research Center.  This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_fhcrc-read"</viewer>
+     </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>56-1</value>
+          <value>56-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 56
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_heal-wa">
+     <title>HEAL-WA</title>
+     <gname>HEAL-WA</gname>
+     <desc>Licensed Healthcare providers who are subscribed to HEAL-WA library resources. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+     <contact>iam-support</contact>
+     <memberViewers>
+       <viewer>cn="u_groups_affiliation_heal-wa-read"</viewer>
+     </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>57-1</value>
+          <value>57-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 57
+  and c.status_code != 3
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_alumni-association-members">
+    <gname>UW Alumni Association Members</gname>
+    <title>UW Alumni Association Members</title>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+      <viewer>dns="courseaccess.cac.washington.edu"</viewer>
+      <viewer>dns="ldapmgmt.cac.washington.edu"</viewer>
+    </memberViewers>
+    <desc>Paying members of the UW Alumni Association.  This is an automatically generated group from the UW Identity Registry.  It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>16-1</value>
+          <value>28-1</value>
+        </category-status>
+        <advance-status_code>
+          <value>1</value>
+        </advance-status_code>
+        <advance-alumni_member>
+          <value>A</value>
+        </advance-alumni_member>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN validation v
+  on u.validation_id = v.validation_id
+  and v.source_code = 7
+  and v.status_code = 1
+  and u.status_code = 30
+JOIN verify alumni_member
+  on alumni_member.validation_id = v.validation_id
+  and alumni_member.verify_code = 130
+  and alumni_member.source_code = v.source_code
+  and alumni_member.verify_data = 'A'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_wwami-medical-resident">
+    <gname>Current WWAMI area Medical Residents</gname>
+    <title>Current WWAMI area Medical Residents</title>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_wwami-medical-resident-read"</viewer>
+    </memberViewers>
+    <desc>A group containing medical residents in FMRN and Spokane Internal Medicine programs who are eligible for employee computing services and UW Libraries system.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>145-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 145
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_my-uw-donor">
+    <gname>My UW Giving Sponsored</gname>
+    <title>My UW Giving Sponsored</title>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+    </memberViewers>
+    <desc>A group containing UW NetIDs created through the My UW Giving registration process. This is an automatically generated group from the UW Person Registry.  It is updated nightly.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>153-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 153
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uwp-staff">
+    <title>UW Physicians Staff</title>
+    <gname>UW Physicians Staff</gname>
+    <desc>This group contains UW Physicians Staff members. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_uwp-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>77-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 77
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uwp-provider">
+    <title>UW Physicians Providers</title>
+    <gname>UW Physicians Providers</gname>
+    <desc>This group contains UW Physicians Provider members. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_uwp-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>76-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 76
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uwnc-staff">
+    <title>UW Neighborhood Clinics Staff</title>
+    <gname>UW Neighborhood Clinics Staff</gname>
+    <desc>This group contains UW Neighborhood Clinics Staff members. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_uwnc-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>80-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 80
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_continuum-student_undergraduate">
+    <title>UW Continuum College Undergraduate Students</title>
+    <gname>UW Continuum College Undergraduate Students</gname>
+    <desc>Students who are enrolled with the Continuum College and have SDB class levels of 01, 02, 03, 04 or 05. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>01</value>
+          <value>02</value>
+          <value>03</value>
+          <value>04</value>
+          <value>05</value>
+        </sdb-sdb_class>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and c.category_code in (18,19)
+  and u.status_code=30
+  and c.source_code=2
+JOIN verify class
+   ON class.validation_id = u.validation_id
+  and class.verify_code = 126
+  and class.source_code = c.source_code
+  and class.instance = 1
+WHERE c.status_code!=3 AND class.verify_data in ('01','02','03','04','05')
+ORDER BY u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_continuum-student_graduate">
+    <title>UW Continuum College Graduate Students</title>
+    <gname>UW Continuum College Graduate Students</gname>
+    <desc>Students who are enrolled with the Continuum College and have SDB class levels of 08, 11, 12, 13 or 14. This is an automatically generated group from the UW Identity Registry. It is updated nightly.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+       <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>08</value>
+          <value>11</value>
+          <value>12</value>
+          <value>13</value>
+          <value>14</value>
+        </sdb-sdb_class>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and c.category_code in (18,19)
+  and u.status_code=30
+  and c.source_code=2
+JOIN verify class
+   ON class.validation_id = u.validation_id
+  and class.verify_code = 126
+  and class.source_code = c.source_code
+  and class.instance = 1
+WHERE c.status_code!=3 AND class.verify_data in ('08','11','12','13','14')
+ORDER BY u.uwnetid;</query>
+  </group>
+</groupDefs>

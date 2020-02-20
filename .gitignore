@@ -1,0 +1,7 @@
+*.pyc
+*.egg-info
+*.o
+*~
+.coverage
+.idea
+env
