@@ -24,9 +24,10 @@ class PersonRegException(Exception):
 
 
 
-# note eduperson affiliation 'library-walk-in' not used by gws system
+# note eduperson affiliation 'alum', 'library-walk-in' not used by gws system
+# alumni collected in uw_affiliation_alumni
 affiliation_filters = []
-eduperson_groups = {'uw_faculty', 'uw_student', 'uw_staff', 'uw_alum', 'uw_member', 'uw_affiliate', 'uw_employee'}
+eduperson_groups = {'uw_faculty', 'uw_student', 'uw_staff', 'uw_member', 'uw_affiliate', 'uw_employee'}
 affiliation_groups = set()
 
 # Process the PersonReg config file
