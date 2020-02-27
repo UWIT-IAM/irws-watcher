@@ -48,7 +48,7 @@ gws_client = None
 
 # configure
 
-parser = argparse.ArgumentParser('Monitor irws source and netid topics')
+parser = argparse.ArgumentParser('Verify netid affiliations or PAC needs.')
 parser.add_argument('-s', '--settings', action='store', dest='settings', help='?')
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', help='?')
 parser.add_argument('-n', '--netid', action='store', dest='netid', help='NetId to verify (affiliations)')
@@ -80,3 +80,7 @@ pac.conf = settings.PAC_CONF
 
 if args.netid is not None:
     affiliation.process_affiliations_as_needed(args.netid)
+elif args.regid is not None:
+    pac.process_pac_as_needed(args.regid)
+else:
+    print("A netid or regid is required")
