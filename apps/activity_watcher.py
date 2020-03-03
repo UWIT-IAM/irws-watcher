@@ -77,6 +77,11 @@ def process_message(message):
             return True
         body = json.loads(message[u'body'])
 
+        if context[u'topic'] == 'source':
+            logger.debug('msg: topic=source, source=' + body[u'source'])
+        else:
+            logger.debug('msg: topic=' + context[u'topic'])
+
         # source events
         if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and body[u'source'] == '6':
             sent = pac.process_pac_as_needed(body[u'regid'])

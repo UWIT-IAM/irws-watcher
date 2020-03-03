@@ -1,8 +1,8 @@
 Dear {{name}}: 
 
-Welcome to the University of Washington! You have been added to the University's NetId system.
+Welcome to the University of Washington! You have been added to the University's identity management system.
 
-To set up a UW NetID, navigate to https://identity.uw.edu/new/, and use the information below:
+To set up a UW NetID account, navigate to https://identity.uw.edu/new/, and use the information below:
 
    Temporary Code:  {{pac}}
    Expiration:      {{pac_exp}}

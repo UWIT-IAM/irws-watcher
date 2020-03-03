@@ -84,10 +84,11 @@ def process_pac_as_needed(regid):
     spid = person.identifiers['sponsored']
     p = spid.find('/sponsored/') + 11
     sourceid = spid[p:]
+    logger.debug('id=' + sourceid)
     sponsored = irws.get_sponsored_person('6', sourceid)
     if sponsored is not None:
-        if sponsored.status_code != 1:
-            logger.debug('sponsored not active')
+        if sponsored.status_code != '1':
+            logger.debug('sponsored not active: status=%s' % sponsored.status_code)
             return False
         
         # if pac sent recently, we're done (6a)

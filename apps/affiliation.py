@@ -87,11 +87,16 @@ def process_affiliations_as_needed(netid, do_adds=True, do_deletes=True):
         person = irws.get_person(netid=netid)
         logger.info('get_person ok.')
 
+    if person is None:
+        logger.info('no person entry for ' + netid)
+        return (0,0)
+
     # category-status
     cat_status = set()
     cats = irws.get_categories(netid=netid)
-    for cat in cats.categories:
-        cat_status.add(cat['category_code'] + '-' + cat['status_code'])
+    if cats is not None:
+        for cat in cats.categories:
+            cat_status.add(cat['category_code'] + '-' + cat['status_code'])
     sdb_status = set()
     sdb_class = set()
     sdb_branch = set()
