@@ -98,7 +98,7 @@ def process_pac_as_needed(regid):
             return False
 
         if len(sponsored.contact_email) == 0:
-            logger.info('PAC for %s needed, but no contact email' % regid)
+            logger.warn('PAC for %s needed, but no contact email' % regid)
             return False
 
         # if conf['EMAIL_PAC'] is false and we got to this point then log and exit

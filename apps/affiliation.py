@@ -162,8 +162,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_deletes=True):
                 logger.debug('group %s is ok' % cn )
                 continue
             logger.debug('group %s adding member' % cn )
-            # ret = gws.put_members(cn, [netid])
-            # logger.debug (ret)
+            ret = gws.put_members(cn, [netid])
+            logger.debug (ret)
             adds.add(cn)
 
     if do_deletes:
@@ -172,7 +172,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_deletes=True):
                 continue
             if not gws.is_direct_member(cn, netid):
                 continue
-            logger.debug('group %s adding member' % cn )
+            logger.debug('group %s would delete member' % cn )
             # ret = gws.put_members(cn, [netid])
             # logger.debug (ret)
             dels.add(cn)
