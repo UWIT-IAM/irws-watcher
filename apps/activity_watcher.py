@@ -49,12 +49,21 @@ irws_client = None
 gws_client = None
 aws_client = None
 
+# action activation flags
+doing_adds = False
+doing_rems = False
+doing_pacs = False
+
 #
 # Process a message
 # returns True unless recoverable error
 #
 
 def process_message(message):
+
+    global doing_adds
+    global doing_rems
+    global doing_pacs
 
     hdr = message[u'header']
     # print('message received: type: %s' % (hdr[u'messageType']))
@@ -84,12 +93,12 @@ def process_message(message):
 
         # source events
         if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and body[u'source'] == '6':
-            sent = pac.process_pac_as_needed(body[u'regid'])
+            sent = pac.process_pac_as_needed(body[u'regid'], do_pacs=doing_pacs)
 
         # uwnetid events = netid affiliation changes
         elif context[u'topic'] == 'uwnetid':
             if u'uwnetid' in body:
-                (adds, dels) = affiliation.process_affiliations_as_needed(body['uwnetid'])
+                (adds, dels) = affiliation.process_affiliations_as_needed(body['uwnetid'], do_adds=doing_adds, do_rems=doing_rems)
 
     return ret
 
@@ -106,6 +115,9 @@ parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', help
 parser.add_argument('-m', '--max_messages', action='store', type=int, dest='maxmsg', help='maximum messages to process.', default=0)
 parser.add_argument('-l', '--logname', action='store', dest='logname', help='process logname.', default='activity')
 parser.add_argument('-c', '--count', action='store_true', dest='count_only', help='just count the messages on the queue', default=False)
+parser.add_argument('--add-members', action='store_true', dest='do_adds', help='Add members to groups as needed')
+parser.add_argument('--remove-members', action='store_true', dest='do_rems', help='Remove members from groups as needed')
+parser.add_argument('--send-pacs', action='store_true', dest='do_pacs', help='Send pacs as needed')
 args = parser.parse_args()
 
 
@@ -158,6 +170,17 @@ affiliation.logger = logger
 affiliation.irws = irws_client
 affiliation.gws = gws_client
 affiliation.parse_filter_file(settings.FILTER_FILE)
+
+doing_adds = args.do_adds
+doing_rems = args.do_rems
+doing_pacs = args.do_pacs
+if not doing_adds:
+    logger.info('Member add is disable. Use "--add-members" to activate.')
+if not doing_rems:
+    logger.info('Member removal is disable. Use "--remove-members" to activate.')
+if not doing_pacs:
+    logger.info('PAC updates and emails are disable. Use "--send-pacs" to activate.')
+
 
 while max_messages == 0 or nmsg < max_messages:
 

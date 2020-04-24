@@ -50,7 +50,7 @@ def _make_msg_headers(msg, hdrs):
 # raises exception on error
 #
 
-def process_pac_as_needed(regid):
+def process_pac_as_needed(regid, do_pacs=True):
 
     # see if there is a netid record already
     try:
@@ -112,6 +112,11 @@ def process_pac_as_needed(regid):
         info['email'] = sponsored.contact_email[0]
         info['name'] = sponsored.fname + ' ' + sponsored.lname
 
+        # skip rest if sending disabled
+        if not do_pacs:
+            logger.info('not updating or sending pac')
+            return True
+         
         # create a PAC and notify user
         try:
             pac = irws.put_pac(sourceid, source='sponsored')

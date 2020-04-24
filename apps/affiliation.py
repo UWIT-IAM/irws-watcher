@@ -74,7 +74,7 @@ def parse_filter_file(filename):
 # dels = group cns the user was removed from
 #
 
-def process_affiliations_as_needed(netid, do_adds=True, do_deletes=True):
+def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
 
     logger.debug('processing ' + netid)
     groups = set()
@@ -150,31 +150,39 @@ def process_affiliations_as_needed(netid, do_adds=True, do_deletes=True):
     pds = irws.get_pdsentry_by_netid(netid)
     if pds is not None:
         for aff in pds.edupersonaffiliation:
-            logger.debug('adding eduperson group uw_' + aff)
+            logger.debug('is edumember: uw_' + aff)
             groups.add('uw_' + aff)
 
     # fix GWS as needed
     adds = set()
     dels = set()
-    if do_adds:
-        for cn in groups:
-            if gws.is_direct_member(cn, netid):
-                logger.debug('group %s is ok' % cn )
-                continue
-            logger.debug('group %s adding member' % cn )
+
+    # adds
+    for cn in groups:
+        if gws.is_direct_member(cn, netid):
+            logger.debug('already in %s' % cn )
+            continue
+        if do_adds:
+            logger.info('adding to group %s' % cn )
             ret = gws.put_members(cn, [netid])
             logger.debug (ret)
             adds.add(cn)
+        else:
+            logger.info('would add to group %s' % cn )
 
-    if do_deletes:
-        for cn in eduperson_groups.union(affiliation_groups):
-            if cn in groups:
-                continue
-            if not gws.is_direct_member(cn, netid):
-                continue
-            logger.debug('group %s would delete member' % cn )
-            # ret = gws.put_members(cn, [netid])
-            # logger.debug (ret)
+    # removals
+    for cn in eduperson_groups.union(affiliation_groups):
+        if cn in groups:
+            continue
+        if not gws.is_direct_member(cn, netid):
+            logger.debug('already not in %s' % cn )
+            continue
+        if do_rems:
+            logger.info('group %s removing member' % cn )
+            ret = gws.put_members(cn, [netid])
+            logger.debug (ret)
             dels.add(cn)
+        else:
+            logger.info('would remove from group %s' % cn )
 
     return (adds, dels)

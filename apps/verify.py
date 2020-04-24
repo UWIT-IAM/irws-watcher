@@ -53,6 +53,9 @@ parser.add_argument('-s', '--settings', action='store', dest='settings', help='?
 parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', help='?')
 parser.add_argument('-n', '--netid', action='store', dest='netid', help='NetId to verify (affiliations)')
 parser.add_argument('-r', '--regid', action='store', dest='regid', help='Regid to verify (send pac)')
+parser.add_argument('--add-members', action='store_true', dest='do_adds', help='Add members to groups as needed')
+parser.add_argument('--remove-members', action='store_true', dest='do_rems', help='Remove members from groups as needed')
+parser.add_argument('--send-pacs', action='store_true', dest='do_pacs', help='Send pacs as needed')
 
 args = parser.parse_args()
 
@@ -78,9 +81,17 @@ pac.logger = logger
 pac.irws = irws_client
 pac.conf = settings.PAC_CONF
 
+if not args.do_adds:
+    print('Member add is disable. Use "--add-members" to activate.')
+if not args.do_rems:
+    print('Member removal is disable. Use "--remove-members" to activate.')
+if not args.do_pacs:
+    print('PAC updates and emails are disable. Use "--send-pacs" to activate.')
+
+
 if args.netid is not None:
-    affiliation.process_affiliations_as_needed(args.netid)
+    affiliation.process_affiliations_as_needed(args.netid, do_adds=args.do_adds, do_rems=args.do_rems)
 elif args.regid is not None:
-    pac.process_pac_as_needed(args.regid)
+    pac.process_pac_as_needed(args.regid, do_pacs=args.do_pacs)
 else:
     print("A netid or regid is required")
