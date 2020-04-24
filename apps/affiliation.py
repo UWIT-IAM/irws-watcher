@@ -150,8 +150,10 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     pds = irws.get_pdsentry_by_netid(netid)
     if pds is not None:
         for aff in pds.edupersonaffiliation:
-            logger.debug('is edumember: uw_' + aff)
-            groups.add('uw_' + aff)
+            cn = 'uw_' + aff
+            if cn in eduperson_groups:
+                logger.debug('is edumember: ' + cn)
+                groups.add(cn)
 
     # fix GWS as needed
     adds = set()
@@ -175,7 +177,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         if cn in groups:
             continue
         if not gws.is_direct_member(cn, netid):
-            logger.debug('already not in %s' % cn )
+            # logger.debug('already not in %s' % cn )
             continue
         if do_rems:
             logger.info('group %s removing member' % cn )

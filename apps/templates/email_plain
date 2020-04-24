@@ -2,10 +2,11 @@ Dear {{name}}:
 
 Welcome to the University of Washington! You have been added to the University's identity management system.
 
-To set up a UW NetID account, navigate to https://identity.uw.edu/new/accept, and use the information below:
+To set up a UW NetID account, navigate to {{url}}, and use the information below:
 
-   Temporary Code:  {{pac}}
-   Expiration:      {{pac_exp}}
+   UW Registration ID:  {{validid}}
+   Temporary Code:      {{pac}}
+   Expiration:          {{pac_exp}}
 
 Only you should use the above information to set up your UW NetID account and password. Note that you should never share your password with anyone.
 

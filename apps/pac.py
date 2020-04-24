@@ -109,8 +109,10 @@ def process_pac_as_needed(regid, do_pacs=True):
         info = {}
         recipients = []
 
+        info['url'] = conf['IDENTITY_URL']
         info['email'] = sponsored.contact_email[0]
         info['name'] = sponsored.fname + ' ' + sponsored.lname
+        info['validid'] = netid.validid
 
         # skip rest if sending disabled
         if not do_pacs:

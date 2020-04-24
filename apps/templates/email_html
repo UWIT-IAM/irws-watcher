@@ -8,10 +8,11 @@ Dear {{name}}:
 Welcome to the University of Washington!
 You have been added to the University's identity management system.</p>
 
-<p>To set up a UW NetID account, navigate to <a href="https://identity.uw.edu/new/accept">https://identity.uw.edu/new/accept</a>, and use the information below:</p>
+<p>To set up a UW NetID account, navigate to <a href="{{url}}">{{url}}</a>, and use the information below:</p>
 
 <p>
 <table>
+<tr><td align="right" style="padding: 0 15px;">  UW Registration ID:</td> <td>{{validid}}</td></tr>
 <tr><td align="right" style="padding: 0 15px;">  Temporary Code:</td> <td>{{pac}}</td></tr>
 <tr><td align="right" style="padding: 0 15px;">  Expiration:</td>    <td>{{pac_exp}}</td></tr>
 </table>
