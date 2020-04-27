@@ -1,0 +1,30 @@
+
+Local host needs ansible
+-------------------------------
+
+$ virtualenv -p python3 installer-env
+$ . ./installer-env/bin/activate
+$ pip install ansible
+
+
+Target site needs some setup before first install
+-------------------------------------------------
+
+(as root, on target)
+# mkdir /data/local/irws-watcher
+# chown iamirwsevents.iam-dev /data/local/irws-watcher
+# mkdir /logs/irws-watcher
+# chown iamirwsevents.iam-dev /logs/irws-watcher
+
+# see the certs and key and etc referenced in settings-*.py
+
+
+--------------------------------------------------
+
+To install or upgrade 
+
+2) ./install.sh idp eval|prod
+
+prod = iam-tools
+eval = iam-tools-test
+

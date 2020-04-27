@@ -1,0 +1,63 @@
+#
+# irws-watcher install playbook
+#
+
+- hosts: "{{ target }}"
+  serial: 1
+  max_fail_percentage: 10
+  gather_facts: false
+  remote_user: iamirwsevents
+  vars:
+    app_name: irws-watcher
+    app_base: /data/local/irws-watcher
+    syslog_facility: LOG_LOCAL7
+
+  tasks:
+
+  - name: assure irws-watcher directory
+    file: "path={{app_base}} group=iam-dev mode=2775 state=directory"
+
+  - name: assure apps directory
+    file: "path={{app_base}}/apps group=iam-dev mode=2775 state=directory"
+
+  - name: and templates
+    file: "path={{app_base}}/apps/templates group=iam-dev mode=2775 state=directory"
+
+  - name: copy base
+    copy: "src=../{{item}} dest={{app_base}}/{{item}} group=iam-dev mode=664 directory_mode=2775"
+    with_items:
+      - setup.py
+      - requirements.txt
+      - README.md
+      - apps/activity_watcher.py.py
+      - apps/affiliation.py
+      - apps/pac.py
+      - apps/verify.py
+      - apps/templates/README
+      - apps/templates/email_headers
+      - apps/templates/email_html
+      - apps/templates/email_plain
+
+  - name: copy scripts
+    template: "src=../apps/{{item}}.j2 dest={{app_base}}/apps/{{item}} group=iam-dev mode=775"
+    with_items:
+      - activity_watcher.sh
+      - verify.sh
+
+  - name: verify libraries
+    pip: requirements={{ app_base }}/workday/requirements.txt virtualenv={{ app_base }}/env
+
+  - name: log cleanup crontab
+    cron: name="logcleanup" day="01" hour="00" minute="01" job="{{app_base}}/apps/cleanup_logs.sh >> /dev/null 2>&1"
+
+  - name: message receiver crontab
+    cron: name="msghandler" special_time="reboot" job="{{app_base}}/apps/activity_watcher.sh >> /dev/null 2>&1"
+    when: target == "prod"
+
+#  # run any handlers
+#  - meta: flush_handlers
+#
+#  handlers:
+#     - include: "ansible-tools/tasks/iam_handlers.yml"
+
+
