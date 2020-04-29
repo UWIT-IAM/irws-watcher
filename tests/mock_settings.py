@@ -1,8 +1,7 @@
-RUN_MODE='Test'
-
-SETTINGS_NAME = 'Test configuration'
-
 import os
+
+RUN_MODE = 'Test'
+SETTINGS_NAME = 'Test configuration'
 settings_path = os.path.dirname(os.path.abspath(__file__))
 
 DEFAULT_CERT_FILE = '../certs/test-2048.crt'
@@ -28,6 +27,7 @@ PAC_CONF = {
     'EMAIL_PLAIN': 'tests/templates/email_plain',
     'EMAIL_HTML': 'tests/templates/email_html',
     'EMAIL_PAC': True,
+    'IDENTITY_URL': 'https://some-identity.s.uw.edu/new/accept',
 }
 
 # augment handlers' configs
@@ -74,10 +74,6 @@ IAM_CONF = {
     'SENDER': 'messaging tester'
 }
 
-
-
-
-
 LOGGING = {
     'version': 1,
     'formatters': {
@@ -120,26 +116,24 @@ LOGGING = {
     },
     'loggers': {
       'root': {
-        'level': 'INFO',
-        'handlers': [ 'runlog', 'default'],
+        'level': 'DEBUG',
+        'handlers': ['runlog', 'default'],
       },
       'message': {
         'level': 'DEBUG',
-        'handlers': [ 'runlog'],
+        'handlers': ['runlog'],
       },
       'recon': {
         'level': 'WARN',
-        'handlers': [ 'runlog'],
+        'handlers': ['runlog'],
       },
       'verify': {
         'level': 'DEBUG',
-        'handlers': [ 'runlog', 'default'],
+        'handlers': ['runlog', 'default'],
       },
       'audit': {
         'level': 'DEBUG',
         'handlers': ['audits']
       },
     }
-
 }
-

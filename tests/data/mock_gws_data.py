@@ -1,5 +1,5 @@
 """
-user 1:  netid=netid1, 
+user 1:  netid=netid1,
 should be in:
   uw_member
   uw_staff
@@ -11,7 +11,7 @@ should be in:
   uw_employee
   uw_student
 
-note: id should be in uw_affiliation_alumni, uw_employee, 
+note: id should be in uw_affiliation_alumni, uw_employee,
       id should not be in uw_affiliation_bothell-student-undergraduate
 """
 member = {

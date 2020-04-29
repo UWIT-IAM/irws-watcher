@@ -28,6 +28,7 @@ conf = None
 templateLoader = jinja2.FileSystemLoader(searchpath="./")
 templateEnv = jinja2.Environment(loader=templateLoader)
 
+
 def _data_from_template(tmpl, info):
     template = templateEnv.get_template(tmpl)
     return template.render(info)
@@ -50,7 +51,7 @@ def _make_msg_headers(msg, hdrs):
 # raises exception on error
 #
 
-def process_pac_as_needed(regid, do_pacs=True):
+def process_pac_as_needed(regid, source_id, do_pacs=True):
 
     # see if there is a netid record already
     try:
@@ -90,7 +91,7 @@ def process_pac_as_needed(regid, do_pacs=True):
         if sponsored.status_code != '1':
             logger.debug('sponsored not active: status=%s' % sponsored.status_code)
             return False
-        
+
         # if pac sent recently, we're done (6a)
         # Note.  We are not sending new pac is status is 'E'
         if sponsored.pac != '':
@@ -105,20 +106,20 @@ def process_pac_as_needed(regid, do_pacs=True):
         if not conf['EMAIL_PAC']:
             logger.info('PAC for %s needed, sending PACs turned off' % regid)
             return False
-    
+
         info = {}
         recipients = []
 
         info['url'] = conf['IDENTITY_URL']
         info['email'] = sponsored.contact_email[0]
         info['name'] = sponsored.fname + ' ' + sponsored.lname
-        info['validid'] = netid.validid
+        info['validid'] = source_id
 
         # skip rest if sending disabled
         if not do_pacs:
             logger.info('not updating or sending pac')
             return True
-         
+
         # create a PAC and notify user
         try:
             pac = irws.put_pac(sourceid, source='sponsored')
@@ -132,7 +133,7 @@ def process_pac_as_needed(regid, do_pacs=True):
         msg = MIMEMultipart('alternative')
         sender = smtplib.SMTP(conf['SMTP_SERVER'])
 
-        # send pac to user 
+        # send pac to user
         hdrs = Parser().parsestr(_data_from_template(conf['EMAIL_HEADERS'], info))
         _make_msg_headers(msg, hdrs)
         t_html = MIMEText(_data_from_template(conf['EMAIL_HTML'], info), 'html')

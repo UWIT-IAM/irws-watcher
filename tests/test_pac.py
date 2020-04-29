@@ -19,23 +19,26 @@ pac.logger = logger
 pac.irws = IRWS(settings.IRWS_CONF)
 pac.conf = settings.PAC_CONF
 
+source_id = '1234567890'
+
+
 @patch('smtplib.SMTP', side_effect=SMTP)
 def test_process_pac_as_needed_id1(object):
 
     # test already has netid
-    ret = pac.process_pac_as_needed('regid1')
+    ret = pac.process_pac_as_needed('regid1', source_id)
     assert not ret
 
     # test disusered
-    ret = pac.process_pac_as_needed('regid2')
+    ret = pac.process_pac_as_needed('regid2', source_id)
     assert not ret
 
     # test netid but no password
-    ret = pac.process_pac_as_needed('regid3')
+    ret = pac.process_pac_as_needed('regid3', source_id)
     assert not ret
 
     # test needs netid
-    ret = pac.process_pac_as_needed('regid4')
+    ret = pac.process_pac_as_needed('regid4', source_id)
     assert ret
     z = SMTP()
     (num, froms, tos, msgs) = z.usage()

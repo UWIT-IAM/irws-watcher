@@ -5,10 +5,11 @@ import data.mock_gws_data as data
 from resttools.exceptions import DataFailureException, InvalidIRWSName
 from resttools.exceptions import ResourceNotFound, BadInput
 
+
 class GWS(object):
 
     def __init__(self, conf):
-        self._puts = ()
+        self._puts = set()
 
     def is_direct_member(self, cn, netid):
         return cn in data.member[netid]
@@ -22,4 +23,3 @@ class GWS(object):
 
     def was_put(cn, member):
         return (cn, member) in self._puts
-        

@@ -6,6 +6,7 @@ m_from = []
 m_recip = []
 m_msg = []
 
+
 class SMTP():
 
     def __init__(self, conf=None):

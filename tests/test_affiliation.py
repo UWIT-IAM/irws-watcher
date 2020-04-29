@@ -19,10 +19,11 @@ logger = logging.getLogger('stdout')
 
 affiliation.logger = logger
 
+
 def test_parse_filter_file():
     filters = affiliation.parse_filter_file(settings.FILTER_FILE)
-    assert len(filters)==34
-    
+    assert len(filters) == 34
+
 
 def test_process_affiliations_as_needed_id1():
     affiliation.parse_filter_file(settings.FILTER_FILE)
@@ -38,4 +39,3 @@ def test_process_affiliations_as_needed_id1():
     for cn in dels:
         assert cn not in irws_data.member['netid1']
         assert cn in gws_data.member['netid1']
-    

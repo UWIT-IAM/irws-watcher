@@ -14,9 +14,6 @@
 
   tasks:
 
-  - name: assure irws-watcher directory
-    file: "path={{app_base}} group=iam-dev mode=2775 state=directory"
-
   - name: assure apps directory
     file: "path={{app_base}}/apps group=iam-dev mode=2775 state=directory"
 
@@ -26,7 +23,6 @@
   - name: copy base
     copy: "src=../{{item}} dest={{app_base}}/{{item}} group=iam-dev mode=664 directory_mode=2775"
     with_items:
-      - setup.py
       - requirements.txt
       - README.md
       - apps/activity_watcher.py.py
@@ -58,6 +54,5 @@
 #  - meta: flush_handlers
 #
 #  handlers:
-#     - include: "ansible-tools/tasks/iam_handlers.yml"
 
 

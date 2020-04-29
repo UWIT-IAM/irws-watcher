@@ -10,6 +10,7 @@ umask 002
 while :;
 do
    python activity_watcher.py $*
+   [[ "$*" == *"--help"* || "$*" == *"-h"*  ]] && exit 0
    sleep 5
 done
 

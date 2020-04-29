@@ -58,14 +58,14 @@ done
 shift $((OPTIND-1))
 target="$1"
 [[ "$target" == "eval" || "$target" == "prod" ]] || usage
-[[ -z $playbook ]] && playbook="install-${product}.yml"
+[[ -z $playbook ]] && playbook="install.yml"
 echo "Installing $playbook to $target"
 [[ -r $playbook ]] || {
   echo "Playbook $playbook not found!"
   exit 1
 }
 
-. installer-env/bin/activate
+. ../env/bin/activate
 ((listhosts>0)) && {
    ansible-playbook ${playbook} --list-hosts -i hosts  --extra-vars "target=${target}"
    exit 0

@@ -59,6 +59,7 @@ doing_pacs = False
 # returns True unless recoverable error
 #
 
+
 def process_message(message):
 
     global doing_adds
@@ -93,7 +94,8 @@ def process_message(message):
 
         # source events
         if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and body[u'source'] == '6':
-            sent = pac.process_pac_as_needed(body[u'regid'], do_pacs=doing_pacs)
+            logger.debug('src6 id=' + body[u'id'])
+            sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs)
 
         # uwnetid events = netid affiliation changes
         elif context[u'topic'] == 'uwnetid':

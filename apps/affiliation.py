@@ -18,19 +18,21 @@ logger = None
 irws = None
 gws = None
 
+
 # utility rollup of exceptions
 class PersonRegException(Exception):
     pass
 
 
-
 # note eduperson affiliation 'alum', 'library-walk-in' not used by gws system
 # alumni collected in uw_affiliation_alumni
+
 affiliation_filters = []
 eduperson_groups = {'uw_faculty', 'uw_student', 'uw_staff', 'uw_member', 'uw_affiliate', 'uw_employee'}
 affiliation_groups = set()
 
 # Process the PersonReg config file
+
 
 def _get_values(filter, name):
     ret = set()
@@ -70,7 +72,7 @@ def parse_filter_file(filename):
 #
 # figure out which affiliations a user should have and correct gws as needed
 # returns (adds, dels)
-# adds = group cns the user was added to 
+# adds = group cns the user was added to
 # dels = group cns the user was removed from
 #
 
@@ -89,7 +91,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
 
     if person is None:
         logger.info('no person entry for ' + netid)
-        return (0,0)
+        return (0, 0)
 
     # category-status
     cat_status = set()
@@ -162,29 +164,29 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     # adds
     for cn in groups:
         if gws.is_direct_member(cn, netid):
-            logger.debug('already in %s' % cn )
+            logger.debug('already in %s' % cn)
             continue
         if do_adds:
-            logger.info('adding to group %s' % cn )
+            logger.info('adding to group %s' % cn)
             ret = gws.put_members(cn, [netid])
-            logger.debug (ret)
+            logger.debug(ret)
             adds.add(cn)
         else:
-            logger.info('would add to group %s' % cn )
+            logger.info('would add to group %s' % cn)
 
     # removals
     for cn in eduperson_groups.union(affiliation_groups):
         if cn in groups:
             continue
         if not gws.is_direct_member(cn, netid):
-            # logger.debug('already not in %s' % cn )
+            # logger.debug('already not in %s' % cn)
             continue
         if do_rems:
-            logger.info('group %s removing member' % cn )
+            logger.info('group %s removing member' % cn)
             ret = gws.put_members(cn, [netid])
-            logger.debug (ret)
+            logger.debug(ret)
             dels.add(cn)
         else:
-            logger.info('would remove from group %s' % cn )
+            logger.info('would remove from group %s' % cn)
 
     return (adds, dels)

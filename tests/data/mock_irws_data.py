@@ -83,7 +83,7 @@ subscription = {
 # matches 'regid3'
 sponsored = {
     "0000400003": {
-        "status_code": 1,
+        "status_code": '1',
         "pac": '',
         "fname": "Joe",
         "lname": "Blow",
@@ -95,7 +95,7 @@ sponsored = {
 pac = {
     "0000400003": {
         "source": "sponsored",
-        "status_code": 1,
+        "status_code": '1',
         "pac": 'pbCx6e',
         "expiration": "2020-04-19 15:38:02",
         "message": "Pac set",
@@ -144,19 +144,16 @@ advance = {
     },
 }
 
-
-# for tests
 member = {
-    "netid1": {"uw_member",
-               "uw_staff",
-               "uw_affiliation_seattle-student-graduate",
-               "uw_affiliation_graduate",
-               "uw_alum",
-               "uw_affiliation_alumni",
-               "uw_affiliation_staff-employee",
-               "uw_employee",
-               "uw_student",
-    }
+    "netid1": {
+        "uw_member",
+        "uw_staff",
+        "uw_affiliation_seattle-student-graduate",
+        "uw_affiliation_graduate",
+        "uw_alum",
+        "uw_affiliation_alumni",
+        "uw_affiliation_staff-employee",
+        "uw_employee",
+        "uw_student",
+    },
 }
-
-

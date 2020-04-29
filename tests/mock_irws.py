@@ -19,8 +19,8 @@ from resttools.exceptions import ResourceNotFound, BadInput
 
 put_pacs = []
 
-class IRWS(object):
 
+class IRWS(object):
 
     def __init__(self, conf):
 
@@ -50,7 +50,7 @@ class IRWS(object):
         categories = Categories()
         categories.categories = data.person[netid]['categories']
         return categories
-        
+
     def get_sdb_person(self, vid):
         sdb = SdbPerson()
         sdb.status_code = data.sdb[vid]['status_code']
