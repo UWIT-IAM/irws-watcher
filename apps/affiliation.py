@@ -161,32 +161,36 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     adds = set()
     dels = set()
 
-    # adds
-    for cn in groups:
-        if gws.is_direct_member(cn, netid):
-            logger.debug('already in %s' % cn)
-            continue
-        if do_adds:
-            logger.info('adding to group %s' % cn)
-            ret = gws.put_members(cn, [netid])
-            logger.debug(ret)
-            adds.add(cn)
-        else:
-            logger.info('would add to group %s' % cn)
+    try:
+        # adds
+        for cn in groups:
+            if gws.is_direct_member(cn, netid):
+                logger.debug('already in %s' % cn)
+                continue
+            if do_adds:
+                logger.info('adding to group %s' % cn)
+                ret = gws.put_members(cn, [netid])
+                logger.debug(ret)
+                adds.add(cn)
+            else:
+                logger.info('would add to group %s' % cn)
 
-    # removals
-    for cn in eduperson_groups.union(affiliation_groups):
-        if cn in groups:
-            continue
-        if not gws.is_direct_member(cn, netid):
-            # logger.debug('already not in %s' % cn)
-            continue
-        if do_rems:
-            logger.info('group %s removing member' % cn)
-            ret = gws.put_members(cn, [netid])
-            logger.debug(ret)
-            dels.add(cn)
-        else:
-            logger.info('would remove from group %s' % cn)
-
+        # removals
+        for cn in eduperson_groups.union(affiliation_groups):
+            if cn in groups:
+                continue
+            if not gws.is_direct_member(cn, netid):
+                # logger.debug('already not in %s' % cn)
+                continue
+            if do_rems:
+                logger.info('group %s removing member' % cn)
+                ret = gws.put_members(cn, [netid])
+                logger.debug(ret)
+                dels.add(cn)
+            else:
+                logger.info('would remove from group %s' % cn)
+    
+    except DataFailureException as e:
+        log.warn('Could not update group %s: %s', (cn, str(e)))
+    
     return (adds, dels)
