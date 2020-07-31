@@ -154,7 +154,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         for aff in pds.edupersonaffiliation:
             cn = 'uw_' + aff
             if cn in eduperson_groups:
-                logger.debug('is edumember: ' + cn)
+                logger.debug('%s is edumember: %s' % (netid, cn))
                 groups.add(cn)
 
     # fix GWS as needed
@@ -165,15 +165,15 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         # adds
         for cn in groups:
             if gws.is_direct_member(cn, netid):
-                logger.debug('already in %s' % cn)
+                logger.debug('%s is already in %s' % (netid, cn))
                 continue
             if do_adds:
-                logger.info('adding to group %s' % cn)
+                logger.debug('adding %s to group %s' % (netid, cn))
                 ret = gws.put_members(cn, [netid])
                 logger.debug(ret)
                 adds.add(cn)
             else:
-                logger.info('would add to group %s' % cn)
+                logger.debug('would add %s to group %s' % (netid, cn))
 
         # removals
         for cn in eduperson_groups.union(affiliation_groups):
