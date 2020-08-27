@@ -93,9 +93,10 @@ def process_message(message):
             logger.debug('msg: topic=' + context[u'topic'])
 
         # source events
-        if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and body[u'source'] == '6':
-            logger.debug('src6 id=' + body[u'id'])
-            sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs)
+        if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and \
+               (body[u'source'] == '6' or body[u'source'] == '15'):
+            logger.debug('src %s id=%s' % (body[u'source'], body[u'id']))
+            sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs, source=body[u'source'])
 
         # uwnetid events = netid affiliation changes
         elif context[u'topic'] == 'uwnetid':

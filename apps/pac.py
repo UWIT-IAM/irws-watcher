@@ -51,7 +51,7 @@ def _make_msg_headers(msg, hdrs):
 # raises exception on error
 #
 
-def process_pac_as_needed(regid, source_id, do_pacs=True):
+def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
 
     # see if there is a netid record already
     try:
