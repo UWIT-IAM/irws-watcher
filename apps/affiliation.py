@@ -189,8 +189,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
                 dels.add(cn)
             else:
                 logger.info('would remove from group %s' % cn)
-    
+
     except DataFailureException as e:
         log.warn('Could not update group %s: %s', (cn, str(e)))
-    
+
     return (adds, dels)
