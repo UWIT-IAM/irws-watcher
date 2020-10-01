@@ -162,15 +162,22 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     dels = set()
 
     try:
+        in_groups = gws.search_groups(member=netid, stem='uw_affiliation', scope='all') + \
+                    gws.search_groups(member=netid, stem='uw', scope='one')
+        logger.debug('%d existing affiliation groups for %s' % (len(in_groups), netid))
+        in_cns = set()
+        for g in in_groups:
+            in_cns.add(g.name)
+
         # adds
         for cn in groups:
-            if gws.is_direct_member(cn, netid):
+            if cn in in_cns:
                 logger.debug('%s is already in %s' % (netid, cn))
                 continue
             if do_adds:
-                logger.debug('adding %s to group %s' % (netid, cn))
+                logger.info('adding %s to group %s' % (netid, cn))
                 ret = gws.put_members(cn, [netid])
-                logger.debug(ret)
+                # logger.info(ret)
                 adds.add(cn)
             else:
                 logger.debug('would add %s to group %s' % (netid, cn))
@@ -179,18 +186,18 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         for cn in eduperson_groups.union(affiliation_groups):
             if cn in groups:
                 continue
-            if not gws.is_direct_member(cn, netid):
+            if cn not in in_cns:
                 # logger.debug('already not in %s' % cn)
                 continue
             if do_rems:
                 logger.info('group %s removing member' % cn)
-                ret = gws.put_members(cn, [netid])
-                logger.debug(ret)
+                ret = gws.delete_members(cn, [netid])
+                # logger.info(ret)
                 dels.add(cn)
             else:
                 logger.info('would remove from group %s' % cn)
 
     except DataFailureException as e:
-        log.warn('Could not update group %s: %s', (cn, str(e)))
+        logger.warn('Could not update group %s: %s' % (cn, str(e)))
 
     return (adds, dels)
