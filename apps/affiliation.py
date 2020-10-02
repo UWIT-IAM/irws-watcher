@@ -40,6 +40,7 @@ def _get_values(filter, name):
     if ele is not None:
         for e_value in ele.iter('value'):
             ret.add(e_value.text)
+
     return ret
 
 
@@ -110,13 +111,16 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         idents = [idents]
     for ident in idents:
         for k, url in ident.items():
-            # logger.debug('doing ' + url)
             if k == 'sdb':
                 p = url.find('/sdb/') + 5
                 sdb = irws.get_sdb_person(url[p:])
-                sdb_status.add(sdb.status_code)
+
+                sdb_status.add(sdb.sdb_status)
+
                 sdb_class.add(sdb.sdb_class)
+
                 sdb_branch.add(sdb.branch)
+
             if k == 'cascadia':
                 p = url.find('/cascadia/') + 10
                 cas = irws.get_cascadia_person(url[p:])
@@ -145,7 +149,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
             continue
 
         # user is in this group
-        # logger.debug('adding group ' + filter['cn'])
+        logger.debug('..adding group ' + filter['cn'])
         groups.add(filter['cn'])
 
     # add eduperson affiliations
