@@ -51,7 +51,7 @@ def _make_msg_headers(msg, hdrs):
 # raises exception on error
 #
 
-def process_pac_as_needed(regid, source_id, do_pacs=True):
+def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
 
     # see if there is a netid record already
     try:
@@ -79,14 +79,27 @@ def process_pac_as_needed(regid, source_id, do_pacs=True):
     if person is None:
         logger.info('regid %s not found in irws' % regid)
         return False
-    if 'sponsored' not in person.identifiers:
-        logger.info('regid %s has no sponsored source' % regid)
+    sourceid = ''
+    sourcecode = ''
+    spid = ''
+    identity_url = conf['IDENTITY_URL']
+    if 'sponsored' in person.identifiers:
+        spid = person.identifiers['sponsored']
+        p = spid.find('/sponsored/') + 11
+        sourceid = spid[p:]
+        sourcecode = 'sponsored'
+    elif 'mugs' in person.identifiers:
+        spid = person.identifiers['mugs']
+        p = spid.find('/mugs/') + 6
+        sourceid = spid[p:]
+        sourcecode = 'mugs'
+        identity_url = conf['IDENTITY_URL_15']
+    else:
+        logger.info('regid %s has no valid source' % regid)
         return False
-    spid = person.identifiers['sponsored']
-    p = spid.find('/sponsored/') + 11
-    sourceid = spid[p:]
+
     logger.debug('id=' + sourceid)
-    sponsored = irws.get_sponsored_person('6', sourceid)
+    sponsored = irws.get_sponsored_person(source, sourceid)
     if sponsored is not None:
         if sponsored.status_code != '1':
             logger.debug('sponsored not active: status=%s' % sponsored.status_code)
@@ -110,10 +123,10 @@ def process_pac_as_needed(regid, source_id, do_pacs=True):
         info = {}
         recipients = []
 
-        info['url'] = conf['IDENTITY_URL']
+        info['url'] = identity_url
         info['email'] = sponsored.contact_email[0]
         info['name'] = sponsored.fname + ' ' + sponsored.lname
-        info['validid'] = source_id
+        info['validid'] = sourceid
 
         # skip rest if sending disabled
         if not do_pacs:
@@ -122,7 +135,7 @@ def process_pac_as_needed(regid, source_id, do_pacs=True):
 
         # create a PAC and notify user
         try:
-            pac = irws.put_pac(sourceid, source='sponsored')
+            pac = irws.put_pac(sourceid, source=sourcecode)
         except DataFailureException as e:
             if e.status == 400:
                 logger.error('msg: IRWS put pac exception for %s: %s' % (sourceid, e.msg))
@@ -146,6 +159,6 @@ def process_pac_as_needed(regid, source_id, do_pacs=True):
         logger.debug('sending pac: regid=%s, contact_email=%s' % (regid, info['email']))
         if len(recipients) > 0:
             sender.sendmail(hdrs['From'], recipients, msg.as_string())
-        logger.info('msg: send pac: id=%s, email=%s' % (regid, info['email']))
+        logger.info('msg: send pac: validid=%s, regid=%s, email=%s' % (sourceid, regid, info['email']))
 
     return True

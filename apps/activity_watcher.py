@@ -93,9 +93,18 @@ def process_message(message):
             logger.debug('msg: topic=' + context[u'topic'])
 
         # source events
-        if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and body[u'source'] == '6':
-            logger.debug('src6 id=' + body[u'id'])
-            sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs)
+        if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and \
+                (body[u'source'] == '6' or body[u'source'] == '6'):
+            logger.debug('src %s id=%s' % (body[u'source'], body[u'id']))
+            sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs, source=body[u'source'])
+
+        elif context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and \
+                body[u'regid'] is not None:
+            logger.debug('src %s id=%s' % (body[u'source'], body[u'id']))
+            irws_netid = None
+            irws_netid = irws_client.get_uwnetid(regid=body[u'regid'])
+            if irws_netid is not None:
+                (adds, dels) = affiliation.process_affiliations_as_needed(irws_netid.uwnetid, do_adds=doing_adds, do_rems=doing_rems)
 
         # uwnetid events = netid affiliation changes
         elif context[u'topic'] == 'uwnetid':
@@ -196,7 +205,7 @@ while max_messages == 0 or nmsg < max_messages:
             if idle1 >= 30:
                 idle5 = 1
             sleep_sec = settings.SHORT_SLEEP
-        # logger.debug('sleep %d seconds' % (sleep_sec))
+        logger.debug('sleep %d seconds' % (sleep_sec))
         time.sleep(sleep_sec)
         continue
     else:

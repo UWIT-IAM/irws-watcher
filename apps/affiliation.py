@@ -40,6 +40,7 @@ def _get_values(filter, name):
     if ele is not None:
         for e_value in ele.iter('value'):
             ret.add(e_value.text)
+
     return ret
 
 
@@ -110,13 +111,16 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         idents = [idents]
     for ident in idents:
         for k, url in ident.items():
-            # logger.debug('doing ' + url)
             if k == 'sdb':
                 p = url.find('/sdb/') + 5
                 sdb = irws.get_sdb_person(url[p:])
-                sdb_status.add(sdb.status_code)
+
+                sdb_status.add(sdb.sdb_status)
+
                 sdb_class.add(sdb.sdb_class)
+
                 sdb_branch.add(sdb.branch)
+
             if k == 'cascadia':
                 p = url.find('/cascadia/') + 10
                 cas = irws.get_cascadia_person(url[p:])
@@ -144,8 +148,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         if len(filter['adv-alum']) > 0 and not (filter['adv-alum'] & adv_alum):
             continue
 
-        # user is in this group
-        # logger.debug('adding group ' + filter['cn'])
+        # validate user is in this group
+        logger.debug('..validate membership of ' + filter['cn'])
         groups.add(filter['cn'])
 
     # add eduperson affiliations
@@ -161,16 +165,43 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     adds = set()
     dels = set()
 
+    is_active = True
+    au = irws.get_account_uwnetid(netid=netid)
+    if au is not None:
+        if au.status_code=='30':
+            logger.info('uwnetid %s is active' % (netid))
+        else:
+            logger.info('uwnetid %s is not active' % (netid))
+            is_active = False
     try:
+        in_groups = gws.search_groups(member=netid, stem='uw_affiliation', scope='all') + \
+                    gws.search_groups(member=netid, stem='uw', scope='one')
+        logger.debug('%d existing base groups for %s' % (len(in_groups), netid))
+        in_cns = set()
+        for g in in_groups:
+            in_cns.add(g.name)
+
+        # remove inactive netid from all affiliations
+        if not is_active:
+            for cn in in_cns:
+                if do_rems:
+                    logger.info('removing %s from group %s' % (netid, cn))
+                    ret = gws.delete_members(cn, [netid])
+                    # logger.info(ret)
+                    dels.add(cn)
+                else:
+                    logger.info('would remove from group %s' % cn)
+            return (adds, dels)
+
         # adds
         for cn in groups:
-            if gws.is_direct_member(cn, netid):
+            if cn in in_cns:
                 logger.debug('%s is already in %s' % (netid, cn))
                 continue
             if do_adds:
-                logger.debug('adding %s to group %s' % (netid, cn))
+                logger.info('adding %s to group %s' % (netid, cn))
                 ret = gws.put_members(cn, [netid])
-                logger.debug(ret)
+                # logger.info(ret)
                 adds.add(cn)
             else:
                 logger.debug('would add %s to group %s' % (netid, cn))
@@ -179,18 +210,18 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         for cn in eduperson_groups.union(affiliation_groups):
             if cn in groups:
                 continue
-            if not gws.is_direct_member(cn, netid):
+            if cn not in in_cns:
                 # logger.debug('already not in %s' % cn)
                 continue
             if do_rems:
-                logger.info('group %s removing member' % cn)
-                ret = gws.put_members(cn, [netid])
-                logger.debug(ret)
+                logger.info('removing %s from group %s' % (netid, cn))
+                ret = gws.delete_members(cn, [netid])
+                # logger.info(ret)
                 dels.add(cn)
             else:
                 logger.info('would remove from group %s' % cn)
-    
+
     except DataFailureException as e:
-        log.warn('Could not update group %s: %s', (cn, str(e)))
-    
+        logger.warn('Could not update group %s: %s' % (cn, str(e)))
+
     return (adds, dels)
