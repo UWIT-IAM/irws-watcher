@@ -175,7 +175,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
             is_active = False
     try:
         in_groups = gws.search_groups(member=netid, stem='uw_affiliation', scope='all') + \
-                    gws.search_groups(member=netid, stem='uw', scope='one')
+                    gws.search_groups(member=netid, stem='uw', scope='one') + \
+                    gws.search_groups(member=netid, stem='u_uwnetid', scope='one')
         logger.debug('%d existing base groups for %s' % (len(in_groups), netid))
         in_cns = set()
         for g in in_groups:
