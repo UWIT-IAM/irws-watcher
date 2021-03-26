@@ -88,11 +88,13 @@ def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
         p = spid.find('/sponsored/') + 11
         sourceid = spid[p:]
         sourcecode = 'sponsored'
+        logger.debug('has sponsored person identifier')
     elif 'mugs' in person.identifiers:
         spid = person.identifiers['mugs']
         p = spid.find('/mugs/') + 6
         sourceid = spid[p:]
         sourcecode = 'mugs'
+        logger.debug('has mugs person identifier')
         identity_url = conf['IDENTITY_URL_15']
     else:
         logger.info('regid %s has no valid source' % regid)
@@ -123,11 +125,6 @@ def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
         info = {}
         recipients = []
 
-        info['url'] = identity_url
-        info['email'] = sponsored.contact_email[0]
-        info['name'] = sponsored.fname + ' ' + sponsored.lname
-        info['validid'] = sourceid
-
         # skip rest if sending disabled
         if not do_pacs:
             logger.info('not updating or sending pac')
@@ -140,6 +137,14 @@ def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
             if e.status == 400:
                 logger.error('msg: IRWS put pac exception for %s: %s' % (sourceid, e.msg))
             return False
+
+        if sourcecode == 'mugs':
+            identity_url = identity_url + '?alumni_id=%s&pac=%s' % (sourceid, pac.pac)
+        logger.debug('url: %s' % (identity_url))
+        info['url'] = identity_url
+        info['email'] = sponsored.contact_email[0]
+        info['name'] = sponsored.fname + ' ' + sponsored.lname
+        info['validid'] = sourceid
         info['pac'] = pac.pac
         info['pac_exp'] = re.sub(':..$', '', pac.expiration)
 
