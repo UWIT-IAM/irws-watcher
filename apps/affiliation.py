@@ -148,8 +148,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         if len(filter['adv-alum']) > 0 and not (filter['adv-alum'] & adv_alum):
             continue
 
-        # user is in this group
-        logger.debug('..adding group ' + filter['cn'])
+        # validate user is in this group
+        logger.debug('..validate membership of ' + filter['cn'])
         groups.add(filter['cn'])
 
     # add eduperson affiliations
@@ -165,13 +165,34 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     adds = set()
     dels = set()
 
+    is_active = True
+    au = irws.get_account_uwnetid(netid=netid)
+    if au is not None:
+        if au.status_code=='30':
+            logger.info('uwnetid %s is active' % (netid))
+        else:
+            logger.info('uwnetid %s is not active' % (netid))
+            is_active = False
     try:
         in_groups = gws.search_groups(member=netid, stem='uw_affiliation', scope='all') + \
-                    gws.search_groups(member=netid, stem='uw', scope='one')
-        logger.debug('%d existing affiliation groups for %s' % (len(in_groups), netid))
+                    gws.search_groups(member=netid, stem='uw', scope='one') + \
+                    gws.search_groups(member=netid, stem='u_uwnetid', scope='one')
+        logger.debug('%d existing base groups for %s' % (len(in_groups), netid))
         in_cns = set()
         for g in in_groups:
             in_cns.add(g.name)
+
+        # remove inactive netid from all affiliations
+        if not is_active:
+            for cn in in_cns:
+                if do_rems:
+                    logger.info('removing %s from group %s' % (netid, cn))
+                    ret = gws.delete_members(cn, [netid])
+                    # logger.info(ret)
+                    dels.add(cn)
+                else:
+                    logger.info('would remove from group %s' % cn)
+            return (adds, dels)
 
         # adds
         for cn in groups:
@@ -194,7 +215,7 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
                 # logger.debug('already not in %s' % cn)
                 continue
             if do_rems:
-                logger.info('group %s removing member' % cn)
+                logger.info('removing %s from group %s' % (netid, cn))
                 ret = gws.delete_members(cn, [netid])
                 # logger.info(ret)
                 dels.add(cn)
