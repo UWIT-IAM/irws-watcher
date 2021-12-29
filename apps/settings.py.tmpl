@@ -2,31 +2,38 @@ RUN_MODE = 'Live'
 
 SETTINGS_NAME = 'Eval configuration'
 
-DEFAULT_CERT_FILE = 'some.crt'
-DEFAULT_KEY_FILE = 'some.key'
-DEFAULT_CA_FILE = 'some-cacerts.cert'
+DEFAULT_CERT_FILE = '/usr/local/ssl/certs/some.cert'
+DEFAULT_KEY_FILE = '/usr/local/ssl/certs/some.key'
+DEFAULT_CA_FILE = '/usr/local/ssl/certs/some-cacerts.cert'
 
 FILTER_FILE = 'data/PersonRegGroupDefs.xml'
 
 GWS_CONF = {
-    'HOST':  'base-url',
+    'HOST':  'https://dev.groups.uw.edu',
     'SOCKET_TIMEOUT':  900.0,
-    'CERT_FILE': 'some.crt'
+    'CERT_FILE': 'some.crt',
     'KEY_FILE': 'some.key'
 }
 
 IRWS_CONF = {
-    'HOST':  'base-url',
-    'SERVICE_NAME': 'registry-xxx',
+    'HOST':  'https://mango-environment.u.washington.edu:646',
+    'SERVICE_NAME': 'registry-environment',
     'SOCKET_TIMEOUT':  65.0,
 }
 
 PAC_CONF = {
-    'SMTP_SERVER': 'some-smtp-server',
+    'SMTP_SERVER': 'appsubmit.cac.washington.edu',
+    'SMTP_USE_SSL': False, # TLS or SSL, not both
+    'SMTP_USE_TLS': True,  # TLS or SSL, not both
+    'SMTP_PORT': 587,      # TLS=587, SSL=465
+    'SMTP_TIMEOUT': 15,
     'EMAIL_HEADERS': 'templates/email_headers',
     'EMAIL_PLAIN': 'templates/email_plain',
     'EMAIL_HTML': 'templates/email_html',
     'EMAIL_PAC': True,
+    'IDENTITY_URL': 'https://identity-eval.s.uw.edu/new/accept',
+    'IDENTITY_URL_15': 'https://identity-eval.s.uw.edu/new/mugs',
+    'SEND_PAC_SOURCES': ['6']
 }
 
 # augment handlers' configs
@@ -42,7 +49,7 @@ for conf in (GWS_CONF, IRWS_CONF):
 
 
 # AWS_CONF  &  IAM_CONF
-exec(open('/some-other-path/settings-eval.py').read())
+exec(open('/data/local/some-install-path/etc/irws-settings-eval.py').read())
 
 LOGGING = {
     'version': 1,
@@ -74,14 +81,14 @@ LOGGING = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'level': 'DEBUG',
             'formatter': 'syslog',
-            'filename': '/some-path/process.log',
+            'filename': '/some-log-path/process.log',
             'when': 'midnight'
         },
         'audits': {
             'class': 'logging.handlers.WatchedFileHandler',
             'level': 'INFO',
             'formatter': 'plaintime',
-            'filename': '/some-path/audit.log',
+            'filename': '/some-log-path/audit.log',
         },
     },
     'loggers': {
@@ -107,7 +114,7 @@ LOGGING = {
       },
       'verify': {
         'level': 'DEBUG',
-        'handlers': ['stdout'],
+        'handlers': ['runlog', 'stdout'],
       },
       'audit': {
         'level': 'DEBUG',

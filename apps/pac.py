@@ -11,7 +11,7 @@ import jinja2
 
 import logging.config
 
-import smtplib
+import smtplib, ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.parser import Parser
@@ -27,6 +27,10 @@ conf = None
 
 templateLoader = jinja2.FileSystemLoader(searchpath="./")
 templateEnv = jinja2.Environment(loader=templateLoader)
+
+
+class MailFailure(RuntimeError):
+    pass
 
 
 def _data_from_template(tmpl, info):
@@ -149,7 +153,33 @@ def process_pac_as_needed(regid, source_id, do_pacs=True, source='0'):
         info['pac_exp'] = re.sub(':..$', '', pac.expiration)
 
         msg = MIMEMultipart('alternative')
-        sender = smtplib.SMTP(conf['SMTP_SERVER'])
+        try:
+            senderdef = smtplib.SMTP_SSL if conf['SMTP_USE_SSL'] else smtplib.SMTP
+            smtp_connect_params = {}
+            smtp_connect_params['host'] = conf['SMTP_SERVER']
+            smtp_connect_params['port'] = conf['SMTP_PORT']
+
+            if conf['SMTP_TIMEOUT'] is not None:
+                smtp_connect_params['timeout'] = conf['SMTP_TIMEOUT']
+            if conf['SMTP_USE_TLS'] or conf['SMTP_USE_SSL']:
+                #DEBUG
+                logger.debug('SMTP X509 info - ca: %s, cert: %s, key %s' % ( conf['CA_FILE'], conf['CERT_FILE'], conf['KEY_FILE']))
+                sslcontext = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH, cafile=conf['CA_FILE'])
+                sslcontext.load_cert_chain(certfile=conf['CERT_FILE'], keyfile=conf['KEY_FILE'])
+
+            if conf['SMTP_USE_TLS']:
+                sender = senderdef(**smtp_connect_params)
+                sender.starttls(context=sslcontext)
+            elif conf['SMTP_USE_SSL']:
+                smtp_connect_params['context'] = sslcontext
+                sender = senderdef(**smtp_connect_params)
+            else:
+                sender = senderdef(**smtp_connect_params)
+
+        except smtplib.SMTPConnectError as ex:
+            raise MailFailure('Unable to connect to SMTP server')
+        except smtplib.SMTPNotSupportedError as ex:
+            raise MailFailure('Unable to use TLS but TLS specified')
 
         # send pac to user
         hdrs = Parser().parsestr(_data_from_template(conf['EMAIL_HEADERS'], info))

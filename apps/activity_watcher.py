@@ -30,7 +30,7 @@ import jinja2
 
 import logging.config
 
-import smtplib
+import smtplib, ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.parser import Parser
@@ -94,7 +94,7 @@ def process_message(message):
 
         # source events
         if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and \
-                (body[u'source'] == '6' or body[u'source'] == '6'):
+                (body[u'source'] in pac.conf['SEND_PAC_SOURCES']):
             logger.debug('src %s id=%s' % (body[u'source'], body[u'id']))
             sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs, source=body[u'source'])
 
@@ -176,6 +176,9 @@ crypt_init(settings.IAM_CONF)
 pac.logger = logger
 pac.irws = irws_client
 pac.conf = settings.PAC_CONF
+pac.conf['CERT_FILE'] = settings.conf['CERT_FILE']
+pac.conf['KEY_FILE'] = settings.conf['KEY_FILE']
+pac.conf['CA_FILE'] = settings.conf['CA_FILE']
 
 affiliation.logger = logger
 affiliation.irws = irws_client
