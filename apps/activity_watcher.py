@@ -30,7 +30,7 @@ import jinja2
 
 import logging.config
 
-import smtplib
+import smtplib, ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.parser import Parser
@@ -40,6 +40,8 @@ from messagetools.aws import AWS
 from resttools.irws import IRWS
 from resttools.gws import GWS
 from resttools.exceptions import DataFailureException
+
+from typing import Any
 
 import pac
 import affiliation
@@ -55,10 +57,21 @@ doing_rems = False
 doing_pacs = False
 
 #
+# Read pac.conf in a safe way
+# reads from pac.conf
+
+def get_pac_config_setting(key: str, allow_none: bool = False, allow_empty: bool = False) -> Any:
+    value = pac.conf.get(key)
+    if value is None and not allow_none:
+        raise KeyError(key)
+    elif not value and not allow_empty:
+        raise ValueError(f'Expected {key} to have a value, but it was {value}')
+    return value
+
+#
 # Process a message
 # returns True unless recoverable error
 #
-
 
 def process_message(message):
 
@@ -78,6 +91,7 @@ def process_message(message):
     # verify correct system type ?
 
     ret = True
+    pac_sources_to_read = get_pac_config_setting('SEND_PAC_SOURCES')
     if hdr[u'sender'] == 'idregistry':
         try:
             context = json.loads(hdr[u'messageContext'])
@@ -92,9 +106,9 @@ def process_message(message):
         else:
             logger.debug('msg: topic=' + context[u'topic'])
 
-        # source events
+        # source events, requires source code to be present in message
         if context[u'topic'] == 'source' and (body[u'type'] == 'insert' or body[u'type'] == 'modify') and \
-                (body[u'source'] == '6' or body[u'source'] == '6'):
+                (body[u'source'] in pac_sources_to_read):
             logger.debug('src %s id=%s' % (body[u'source'], body[u'id']))
             sent = pac.process_pac_as_needed(body[u'regid'], body[u'id'], do_pacs=doing_pacs, source=body[u'source'])
 
@@ -106,7 +120,7 @@ def process_message(message):
             if irws_netid is not None:
                 (adds, dels) = affiliation.process_affiliations_as_needed(irws_netid.uwnetid, do_adds=doing_adds, do_rems=doing_rems)
 
-        # uwnetid events = netid affiliation changes
+        # uwnetid events = netid affiliation changes, does not deduplicate
         elif context[u'topic'] == 'uwnetid':
             if u'uwnetid' in body:
                 (adds, dels) = affiliation.process_affiliations_as_needed(body['uwnetid'], do_adds=doing_adds, do_rems=doing_rems)
@@ -176,6 +190,9 @@ crypt_init(settings.IAM_CONF)
 pac.logger = logger
 pac.irws = irws_client
 pac.conf = settings.PAC_CONF
+pac.conf['CERT_FILE'] = settings.conf['CERT_FILE']
+pac.conf['KEY_FILE'] = settings.conf['KEY_FILE']
+pac.conf['CA_FILE'] = settings.conf['CA_FILE']
 
 affiliation.logger = logger
 affiliation.irws = irws_client

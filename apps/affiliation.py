@@ -169,9 +169,9 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
     au = irws.get_account_uwnetid(netid=netid)
     if au is not None:
         if au.status_code=='30':
-            logger.info('uwnetid %s is active' % (netid))
+            logger.debug('uwnetid %s is active' % (netid))
         else:
-            logger.info('uwnetid %s is not active' % (netid))
+            logger.debug('uwnetid %s is not active' % (netid))
             is_active = False
     try:
         in_groups = gws.search_groups(member=netid, stem='uw_affiliation', scope='all') + \
@@ -180,6 +180,8 @@ def process_affiliations_as_needed(netid, do_adds=True, do_rems=False):
         logger.debug('%d existing base groups for %s' % (len(in_groups), netid))
         in_cns = set()
         for g in in_groups:
+            if g.name == 'uw_affiliation_staff-non-uwm-workforce':
+               continue
             in_cns.add(g.name)
 
         # remove inactive netid from all affiliations
