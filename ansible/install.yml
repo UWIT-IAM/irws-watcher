@@ -25,23 +25,22 @@
     with_items:
       - requirements.txt
       - README.md
-      - apps/activity_watcher.py.py
+      - apps/activity_watcher.py
       - apps/affiliation.py
       - apps/pac.py
       - apps/verify.py
-      - apps/templates/README
       - apps/templates/email_headers
       - apps/templates/email_html
       - apps/templates/email_plain
 
   - name: copy scripts
-    template: "src=../apps/{{item}}.j2 dest={{app_base}}/apps/{{item}} group=iam-dev mode=775"
+    copy: "src=../apps/{{item}} dest={{app_base}}/apps/{{item}} group=iam-dev mode=775"
     with_items:
       - activity_watcher.sh
       - verify.sh
 
   - name: verify libraries
-    pip: requirements={{ app_base }}/workday/requirements.txt virtualenv={{ app_base }}/env
+    pip: requirements={{ app_base }}/requirements.txt virtualenv={{ app_base }}/env
 
   - name: log cleanup crontab
     cron: name="logcleanup" day="01" hour="00" minute="01" job="{{app_base}}/apps/cleanup_logs.sh >> /dev/null 2>&1"
