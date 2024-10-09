@@ -639,45 +639,6 @@ JOIN category c
 ORDER by u.uwnetid;</query>
   </group>
 
-  <group cn="uw_affiliation_staff-non-uwm-workforce">
-    <title>UW Staff Employees not identified as UW Medicine Workforce</title>
-    <gname>UW Staff Employees not identified as UW Medicine Workforce</gname>
-    <desc>Employees with a staff position in Workday who are not identified as UW Medicine Workforce. This group is updated daily from UW-IT Identity Registry data.</desc>
-    <classification>restricted</classification>
-    <memberViewers>
-      <viewer>cn="uw_employee"</viewer>
-      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
-    </memberViewers>
-    <memberUpdaters>
-      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
-    </memberUpdaters>
-    <contact>iam-support</contact>
-     <realtime>
-       <filter type="1">
-       <category-status>
-          <value>4-50</value>
-          <value>14-50</value>
-          <notvalue>13-50</notvalue>
-        </category-status>
-       </filter>
-     </realtime>
-    <query>
-SELECT distinct u.uwnetid 
-FROM uwnetid u 
-JOIN category c4
-  on u.validation_id = c4.validation_id
-  and u.status_code = 30
-  and c4.category_code in (4,14,288)
-  and c4.status_code != 3
-LEFT JOIN category c13
-  on u.validation_id = c13.validation_id
-  and u.status_code = 30
-  and c13.category_code = 13
-  and c13.status_code != 3
-WHERE c13.category_code is NULL
-ORDER by u.uwnetid;</query>
-  </group>
-
   <group cn="uw_affiliation_alumni">
     <title>UW Alumni</title>
     <gname>UW Alumni</gname>
