@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <?xml version='1.0'?>
 <groupDefs>
 
@@ -1084,3 +1085,2030 @@ WHERE c.status_code!=3 AND class.verify_data in ('08','11','12','13','14')
 ORDER BY u.uwnetid;</query>
   </group>
 </groupDefs>
+=======
+<?xml version='1.0'?>
+<groupDefs>
+
+  <group cn="uw_affiliation_undergraduate">
+    <title>UW Undergraduate Students</title>
+    <gname>UW Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW students who are identified as undergraduates. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c 
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_graduate">
+    <title>UW Graduate Students</title>
+    <gname>UW Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW students who are identified as graduate students, including professional degree programs (Dentistry, Law, Medicine, etc.) and approved on-leave graduate students. Includes a grace period for recently enrolled students.  This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c 
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 2 
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_graduate-current">
+    <title>UW Graduate Students - Current</title>
+    <gname>UW Graduate Students - Current</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="uw_employee"</viewer>
+       <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW students who are identified as graduate students for the current quarter only, including approved on-leave graduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+        </category-status>
+        <sdb-sdb_status>
+          <value>E</value>
+          <value>L</value>
+        </sdb-sdb_status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code = 1
+JOIN verify sdb_status
+  on sdb_status.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_status.verify_code = 127
+  and sdb_status.source_code = 2
+  and sdb_status.verify_data in ('E','L')
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_graduate-grad">
+    <title>UW Graduate Students - Graduate</title>
+    <gname>UW Graduate Students - Graduate</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW students who are identified as graduate students, including approved on-leave graduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+           <value>2-1</value>
+           <value>2-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>08</value>
+        </sdb-sdb_class>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code in (1,2)
+JOIN verify sdb_class
+  on sdb_class.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_class.verify_code = 126
+  and sdb_class.source_code = 2
+  and sdb_class.verify_data = '08' 
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_seattle-student">
+    <title>Current Seattle students</title>
+    <gname>Current Seattle students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="uw_employee"</viewer>
+         <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>A group containing all current students whose primary campus is identified as Seattle.  This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>2-1</value>
+          <value>18-1</value>
+          <value>19-1</value>
+        </category-status>
+        <sdb-branch>
+          <value>0</value>
+        </sdb-branch>
+        <sdb-sdb_status>
+          <value>E</value>
+        </sdb-sdb_status>
+       </filter>
+     </realtime>
+    <query>SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code in (1,2,18,19)
+  and c.status_code = 1
+JOIN verify sdb_status
+  on sdb_status.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_status.verify_code = 127
+  and sdb_status.source_code = 2
+  and sdb_status.verify_data = 'E'
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '0'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_seattle-student-undergraduate">
+    <title>UW Seattle Undergraduate Students</title>
+    <gname>UW Seattle Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Seattle students who are identified as undergraduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>0</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30 
+  and c.category_code = 1 
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '0'
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_seattle-student-graduate">
+    <title>UW Seattle Graduate Students</title>
+    <gname>UW Seattle Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Seattle students who are identified as graduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>0</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30 
+  and c.category_code = 2 
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '0'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_bothell-student">
+    <title>Current Bothell students</title>
+    <gname>Current Bothell students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="uw_employee"</viewer>
+         <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>A group containing all current students whose primary campus is identified as Bothell.  This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>2-1</value>
+          <value>18-1</value>
+          <value>19-1</value>
+        </category-status>
+        <sdb-branch>
+          <value>1</value>
+        </sdb-branch>
+        <sdb-sdb_status>
+          <value>E</value>
+        </sdb-sdb_status>
+       </filter>
+     </realtime>
+    <query>SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code in (1,2,18,19)
+  and c.status_code = 1
+JOIN verify sdb_status
+  on sdb_status.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_status.verify_code = 127
+  and sdb_status.source_code = 2
+  and sdb_status.verify_data = 'E'
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '1'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_bothell-student-undergraduate">
+    <title>UW Bothell Undergraduate Students</title>
+    <gname>UW Bothell Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Bothell students who are identified as undergraduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>1</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '1'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_bothell-student-graduate">
+    <title>UW Bothell Graduate Students</title>
+    <gname>UW Bothell Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Bothell students who are identified as graduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>1</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '1'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_tacoma-student">
+    <title>Current Tacoma students</title>
+    <gname>Current Tacoma students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="uw_employee"</viewer>
+         <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>A group containing all current students whose primary campus is identified as Tacoma.  This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>2-1</value>
+          <value>18-1</value>
+          <value>19-1</value>
+        </category-status>
+        <sdb-branch>
+          <value>2</value>
+        </sdb-branch>
+        <sdb-sdb_status>
+          <value>E</value>
+        </sdb-sdb_status>
+       </filter>
+     </realtime>
+    <query>SELECT distinct u.uwnetid 
+FROM uwnetid u
+JOIN category c 
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code in (1,2,18,19)
+  and c.status_code = 1
+JOIN verify sdb_status
+  on sdb_status.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_status.verify_code = 127
+  and sdb_status.source_code = 2
+  and sdb_status.verify_data = 'E'
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '2'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_tacoma-student-undergraduate">
+    <title>UW Tacoma Undergraduate Students</title>
+    <gname>UW Tacoma Undergraduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Tacoma students who are identified as undergraduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>1-1</value>
+          <value>1-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>2</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 1
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '2'  
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_tacoma-student-graduate">
+    <title>UW Tacoma Graduate Students</title>
+    <gname>UW Tacoma Graduate Students</gname>
+    <classification>restricted</classification>
+    <memberViewers>
+       <viewer>cn="u_groups_mailman"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>UW Tacoma students who are identified as graduate students. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>2-1</value>
+          <value>2-2</value>
+        </category-status>
+        <sdb-branch>
+          <value>2</value>
+        </sdb-branch>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on u.validation_id = c.validation_id 
+  and u.status_code = 30
+  and c.category_code = 2
+  and c.status_code in (1,2)
+JOIN verify sdb_branch
+  on sdb_branch.validation_id = u.validation_id
+  and u.status_code = 30
+  and sdb_branch.verify_code = 128
+  and sdb_branch.source_code = 2
+  and sdb_branch.verify_data = '2'
+ORDER by u.uwnetid;</query>
+  </group> 
+
+  <group cn="uw_affiliation_uw-medicine-workforce">
+    <title>UW Medicine Workforce Members</title>
+    <gname>UW Medicine Workforce Members</gname>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>Members of the UW Medicine Workforce that use clinical applications as identified by UW Medicine IT Services User Access Administration (uaa@u.washington.edu). This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>13-1</value>
+          <value>13-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 13
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_staff-employee">
+    <title>UW Staff Employees</title>
+    <gname>UW Staff Employees</gname>
+    <desc>UW staff.  Excludes student employee appointments. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a two week grace period for recent terminees.</desc>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <contact>iam-support</contact>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>4-1</value>
+          <value>4-2</value>
+          <value>288-1</value>
+          <value>288-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code in (4,288)
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_student-employee">
+    <title>UW Student Employees</title>
+    <gname>UW Student Employees</gname>
+    <desc>UW student employees.  This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a two week grace period for recent terminees.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>14-1</value>
+          <value>14-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 14
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_affiliate-employee">
+    <title>UW Affiliate Employees</title>
+    <gname>UW Affiliate Employees</gname>
+    <desc>Contingent Workers in Workday. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a two week grace period for recent terminees.</desc>
+    <contact>iam-support</contact>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+      <viewer>cn="uw_employee"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>15-1</value>
+          <value>15-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 15
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_staff-non-uwm-workforce">
+    <title>UW Staff Employees not identified as UW Medicine Workforce</title>
+    <gname>UW Staff Employees not identified as UW Medicine Workforce</gname>
+    <desc>Employees with a staff position in Workday who are not identified as UW Medicine Workforce. This group is updated daily from UW-IT Identity Registry data.</desc>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <contact>iam-support</contact>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c4
+  on u.validation_id = c4.validation_id
+  and u.status_code = 30
+  and c4.category_code in (4,14,288)
+  and c4.status_code in (1,2)
+LEFT JOIN category c13
+  on u.validation_id = c13.validation_id
+  and u.status_code = 30
+  and c13.category_code = 13
+  and c13.status_code in (1,2)
+WHERE c13.category_code is NULL
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_faculty-non-uwm-workforce">
+    <title>UW Faculty not identified as UW Medicine Workforce</title>
+    <gname>UW Faculty not identified as UW Medicine Workforce</gname>
+    <desc>Employees with a faculty position or appointment in Workday who are not identified as UW Medicine Workforce. This group is updated daily from UW-IT Identity Registry data.</desc>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <contact>iam-support</contact>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c4
+  on u.validation_id = c4.validation_id
+  and u.status_code = 30
+  and c4.category_code in (5,287,289)
+  and c4.status_code in (1,2)
+LEFT JOIN category c13
+  on u.validation_id = c13.validation_id
+  and u.status_code = 30
+  and c13.category_code = 13
+  and c13.status_code in (1,2)
+WHERE c13.category_code is NULL
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_alumni">
+    <title>UW Alumni</title>
+    <gname>UW Alumni</gname>
+    <desc>Alumni of the UW.  This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>16-1</value>
+          <value>16-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 16
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uw-medicine-affiliate">
+    <title>UW Medicine Non-Workforce</title>
+    <gname>UW Medicine Non-Workforce</gname>
+    <desc>UW Medicine Non-Workforce that use clinical applications as identified by UW Medicine IT Services User Access Administration (uaa@u.washington.edu). This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+       <viewer>cn="u_groups_affiliation_uwmedicine-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>17-1</value>
+          <value>17-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 17
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_extension-student">
+    <title>UW Extension Students</title>
+    <gname>UW Extension Students</gname>
+    <desc>Students who are in the Professional &amp;amp; Continuing Education program. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code in (18,19)
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_applicant">
+    <title>UW Applicants</title>
+    <gname>UW Applicants</gname>
+    <desc>Applicants for admission to the UW. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recent applicants.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>20-1</value>
+          <value>20-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 20
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_cascadia-user">
+    <title>Cascadia Community College Members</title>
+    <gname>Cascadia Community College Members</gname>
+    <desc>Employees and students of Cascadia Community College. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students and employees.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_cascadia-student">
+    <title>Cascadia Community College Students</title>
+    <gname>Cascadia Community College Students</gname>
+    <desc>Students of Cascadia Community College. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+        <cascadia-department>
+          <value>STU</value>
+        </cascadia-department>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code in (1,2)
+JOIN verify cascadia_dept
+  on cascadia_dept.validation_id=u.validation_id
+  and u.status_code = 30
+  and cascadia_dept.verify_code = 117
+  and cascadia_dept.source_code = 8
+  and cascadia_dept.verify_data = 'STU'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_cascadia-employee">
+    <title>Cascadia Community College Employees</title>
+    <gname>Cascadia Community College Employees</gname>
+    <desc>Employees of Cascadia Community College. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recent employees.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_cascadia-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>41-1</value>
+          <value>41-2</value>
+        </category-status>
+        <cascadia-department>
+          <value>EMP</value>
+        </cascadia-department>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 41
+  and c.status_code in (1,2)
+JOIN verify cascadia_dept
+  on cascadia_dept.validation_id=u.validation_id
+  and u.status_code = 30
+  and cascadia_dept.verify_code = 117
+  and cascadia_dept.source_code = 8
+  and cascadia_dept.verify_data = 'EMP'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_scca-employee">
+    <title>Seattle Cancer Care Alliance Employees</title>
+    <gname>Seattle Cancer Care Alliance Employees</gname>
+    <desc>Employees of Seattle Cancer Care Alliance. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_scca-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>53-1</value>
+          <value>53-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 53
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_scca-affiliate">
+    <title>Seattle Cancer Care Alliance Affiliates</title>
+    <gname>Seattle Cancer Care Alliance Affiliates</gname>
+    <desc>Affiliates of Seattle Cancer Care Alliance. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_scca-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>54-1</value>
+          <value>54-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 54
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_fhcrc-employee">
+    <title>Fred Hutchinson Cancer Research Center Employees</title>
+    <gname>Fred Hutchinson Cancer Research Center Employees</gname>
+    <desc>Employees of Fred Hutchinson Cancer Research Center. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_fhcrc-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>55-1</value>
+          <value>55-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 55
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_fhcrc-affiliate">
+    <title>Fred Hutchinson Cancer Research Center Affiliates</title>
+    <gname>Fred Hutchinson Cancer Research Center Affiliates</gname>
+    <desc>Affiliates of Fred Hutchinson Cancer Research Center. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_fhcrc-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>56-1</value>
+          <value>56-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 56
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_heal-wa">
+    <title>HEAL-WA</title>
+    <gname>HEAL-WA</gname>
+    <desc>Licensed Healthcare providers who are subscribed to HEAL-WA library resources. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a two week grace period for recently licensed providers.</desc>
+    <contact>iam-support</contact>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_heal-wa-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>57-1</value>
+          <value>57-2</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 57
+  and c.status_code in (1,2)
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_alumni-association-members">
+    <gname>UW Alumni Association Members</gname>
+    <title>UW Alumni Association Members</title>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>Paying members of the UW Alumni Association. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>16-1</value>
+          <value>28-1</value>
+        </category-status>
+        <advance-status_code>
+          <value>1</value>
+        </advance-status_code>
+        <advance-alumni_member>
+          <value>A</value>
+        </advance-alumni_member>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u 
+JOIN validation v
+  on u.validation_id = v.validation_id
+  and v.source_code = 7
+  and v.status_code = 1
+  and u.status_code = 30
+JOIN verify alumni_member
+  on alumni_member.validation_id = v.validation_id
+  and u.status_code = 30
+  and alumni_member.verify_code = 130
+  and alumni_member.source_code = v.source_code
+  and alumni_member.verify_data = 'A'
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_wwami-medical-resident">
+    <gname>Current WWAMI area Medical Residents</gname>
+    <title>Current WWAMI area Medical Residents</title>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_wwami-medical-resident-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>A group containing medical residents in FMRN and Spokane Internal Medicine programs who are eligible for employee computing services and UW Libraries system. This group is automatically maintained in near-real time from UW-IT Identity Registry data.  Includes a short grace period for recently enrolled residents.</desc>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>145-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 145
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_my-uw-donor">
+    <gname>My UW Giving Sponsored</gname>
+    <title>My UW Giving Sponsored</title>
+    <classification>public</classification>
+    <memberViewers>
+      <viewer>cn="u_groups_affiliation_alumni-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <desc>A group containing UW NetIDs created through the My UW Giving registration process. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>153-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 153
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_uwp-provider">
+    <title>UW Physicians Providers</title>
+    <gname>UW Physicians Providers</gname>
+    <desc>This group contains UW Physicians Provider members. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+     <realtime>
+       <filter type="1">
+        <category-status>
+          <value>76-1</value>
+        </category-status>
+       </filter>
+     </realtime>
+    <query>
+SELECT distinct u.uwnetid 
+FROM uwnetid u 
+JOIN category c
+  on u.validation_id = c.validation_id
+  and u.status_code = 30
+  and c.category_code = 76
+  and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_continuum-student_undergraduate">
+    <title>UW Continuum College Undergraduate Students</title>
+    <gname>UW Continuum College Undergraduate Students</gname>
+    <desc>Students who are enrolled with the Continuum College and have SDB class levels of 01, 02, 03, 04 or 05. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>01</value>
+          <value>02</value>
+          <value>03</value>
+          <value>04</value>
+          <value>05</value>
+        </sdb-sdb_class>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and c.category_code in (18,19)
+  and u.status_code=30
+  and c.source_code=2
+  and c.status_code in (1,2)
+JOIN verify class
+  on class.validation_id = u.validation_id
+  and u.status_code = 30
+  and class.verify_code = 126
+  and class.source_code = c.source_code
+  and class.instance = 1
+  and class.verify_data in ('01','02','03','04','05')
+ORDER BY u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_continuum-student_graduate">
+    <title>UW Continuum College Graduate Students</title>
+    <gname>UW Continuum College Graduate Students</gname>
+    <desc>Students who are enrolled with the Continuum College and have SDB class levels of 08, 11, 12, 13 or 14. This group is automatically maintained in near-real time from UW-IT Identity Registry data. Includes a grace period for recently enrolled students.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+       <viewer>cn="u_groups_affiliation_student-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>18-1</value>
+          <value>18-2</value>
+          <value>19-1</value>
+          <value>19-2</value>
+        </category-status>
+        <sdb-sdb_class>
+          <value>08</value>
+          <value>11</value>
+          <value>12</value>
+          <value>13</value>
+          <value>14</value>
+        </sdb-sdb_class>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code in (18,19)
+  and c.source_code = 2
+  and c.status_code in (1,2)
+JOIN verify class
+  on class.validation_id = u.validation_id
+  and u.status_code = 30
+  and class.verify_code = 126
+  and class.source_code = c.source_code
+  and class.instance = 1
+  and class.verify_data in ('08','11','12','13','14')
+ORDER BY u.uwnetid;</query>
+  </group>
+
+  <group cn="uw_affiliation_retiree">
+    <title>UW Retirees in Workday</title>
+    <gname>UW Retirees in Workday</gname>
+    <desc>Individuals with an active retiree position in Worday. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+      <viewer>cn="uw_employee"</viewer>
+      <viewer>cn="u_groups_affiliation_employee-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>34-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+  on c.validation_id = u.validation_id
+  and u.status_code = 30
+  and c.category_code = 34
+  and c.source_code = 1
+  and c.status_code = 1
+ORDER BY u.uwnetid;</query>
+  </group>
+
+  <group cn="u_uwnetid_shared_clinical">
+    <title>Shared UW NetIDs managed by UW Medicine</title>
+    <gname>Shared UW NetIDs managed by UW Medicine</gname>
+    <desc>Active Clinical Shared UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>22-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 22
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_shared_clinical-no-service">
+    <title>Shared UW NetIDs managed by UW Medicine no-service</title>
+    <gname>Shared UW NetIDs managed by UW Medicine no-service</gname>
+    <desc>Active Clinical Shared UW NetIDs marked as not eligible for UW NetID services like @uw.edu email. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>23-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 23
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_shared_course">
+    <title>Shared UW NetIDs categorized as Course</title>
+    <gname>Shared UW NetIDs categorized as Course</gname>
+    <desc>Active Course Shared UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>12-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 12
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_shared_department">
+    <title>Shared UW NetIDs categorized as Departmental</title>
+    <gname>Shared UW NetIDs categorized as Departmental</gname>
+    <desc>Active Departmental Shared UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>11-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 11
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_shared_no-service">
+    <title>Shared UW NetIDs categorized as No-Service</title>
+    <gname>Shared UW NetIDs categorized as No-Service</gname>
+    <desc>Active No-Service Shared UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>24-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 24
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_shared_student">
+    <title>Shared UW NetIDs categorized as Student Activity Office accounts</title>
+    <gname>Shared UW NetIDs categorized as Student Activity Office accounts</gname>
+    <desc>Active SAO RSO Shared UW NetIDs. Includes Shared UW NetIDs affiliated with Bothell, Seattle, or Tacoma. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>21-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 21
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+   <group cn="u_uwnetid_shared_support-organization">
+    <title>Shared UW NetIDs categorized as Support Organization</title>
+    <gname>Shared UW NetIDs categorized as Support Organization</gname>
+    <desc>Active Support Organization Shared UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>69-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 69
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+  
+  <group cn="u_uwnetid_admin">
+    <title>Admin UW NetIDs</title>
+    <gname>Admin UW NetIDs</gname>
+    <desc>Active Admin UW NetIDs. This group is automatically maintained in near-real time from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <exchangeMail/>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+    </memberUpdaters>
+    <realtime>
+      <filter type="1">
+        <category-status>
+          <value>46-1</value>
+        </category-status>
+      </filter>
+    </realtime>
+    <query>
+SELECT distinct u.uwnetid
+FROM uwnetid u
+JOIN category c
+on u.validation_id = c.validation_id
+and u.status_code = 30
+and c.category_code = 46
+and c.status_code = 1
+ORDER by u.uwnetid;</query>
+  </group>
+
+  <group cn="u_uwnetid_policy_recovery-needed">
+    <title>UW NetIDs that need to complete password recovery onboarding</title>
+    <gname>Personal UW NetIDs with remaining set up tasks.</gname>
+    <desc>Personal UW NetIDs that need to complete some account configuration steps. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="identity.iamdev.s.uw.edu"</updater>
+      <updater>dns="identity.iameval.s.uw.edu"</updater>
+      <updater>dns="identity.iamprod.s.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select
+  distinct u.uwnetid
+from uwnetid u 
+join validation v
+  on v.validation_id = u.validation_id
+  and v.status_code = 1
+  and v.source_code in (1,2,3)
+join regid r
+  on r.validation_id = u.validation_id
+  and u.status_code = 30
+  and r.entity_code = 10
+  and r.test = 0
+left join verify ve_sms
+  on ve_sms.validation_id = u.validation_id
+  and u.status_code = 30
+  and ve_sms.source_code = 0
+  and ve_sms.verify_code = 83
+  and ve_sms.verify_data = 'sms'
+left join verify ve_email
+  on ve_email.validation_id = u.validation_id
+  and u.status_code = 30
+  and ve_email.source_code = 0
+  and ve_email.verify_code = 83
+  and ve_email.verify_data = 'email'
+where 
+ u.status_code = 30
+ and ve_sms.source_code is NULL
+ and ve_email.source_code is NULL
+order by 1;</query>
+  </group>
+
+  <group cn="u_uwnetid_policy_recovery-required">
+    <title>UW NetIDs that need to complete password recovery onboarding in order to log in</title>
+    <gname>Personal UW NetIDs with remaining set up tasks, deadline passed.</gname>
+    <desc>Personal UW NetIDs that need to complete some account configuration steps. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="identity.iamdev.s.uw.edu"</updater>
+      <updater>dns="identity.iameval.s.uw.edu"</updater>
+      <updater>dns="identity.iamprod.s.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select
+  distinct u.uwnetid
+from uwnetid u
+join validation v
+  on v.validation_id=u.validation_id
+join regid r
+  on r.validation_id=u.validation_id
+  and u.status_code = 30
+  and r.entity_code = 10
+  and r.test = 0
+left join verify ve_sms
+  on ve_sms.validation_id = u.validation_id
+  and u.status_code = 30
+  and ve_sms.source_code = 0
+  and ve_sms.verify_code = 83
+  and ve_sms.verify_data = 'sms'
+left join verify ve_email
+  on ve_email.validation_id = u.validation_id
+  and u.status_code = 30
+  and ve_email.source_code = 0
+  and ve_email.verify_code = 83
+  and ve_email.verify_data = 'email'
+where
+ u.created &lt; DATE_SUB(now(), INTERVAL 7 day)
+ and u.created &gt; '2025-07-28'
+ and ve_sms.source_code is NULL
+ and ve_email.source_code is NULL
+
+UNION
+
+select
+  distinct u.uwnetid
+from uwnetid u
+join validation v
+  on v.validation_id = u.validation_id
+join regid r
+  on r.validation_id = u.validation_id
+  and u.status_code = 30
+  and r.entity_code = 10
+  and r.test = 0
+left join verify ve_sms
+  on ve_sms.validation_id = u.validation_id
+  and ve_sms.source_code = 0
+  and ve_sms.verify_code = 83
+  and ve_sms.verify_data = 'sms'
+left join verify ve_email
+  on ve_email.validation_id = u.validation_id
+  and ve_email.source_code = 0
+  and ve_email.verify_code = 83
+  and ve_email.verify_data = 'email'
+left join category cat_staff
+  on cat_staff.validation_id = u.validation_id
+  and cat_staff.source_code = 1
+  and cat_staff.category_code = 4
+  and cat_staff.status_code = 1
+where
+  cat_staff.validation_id is not NULL
+  and ve_sms.source_code is NULL
+  and ve_email.source_code is NULL
+order by 1;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_uwm_all">
+    <title>Former UW Medicine users with no additional affiliations</title>
+    <gname>Former UW Medicine users with no additional affiliations who are blocked from UW computing systems.</gname>
+    <desc>Personal UW NetIDs that are former UW Medicine workers and affiliates in Sailpoint with no other affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid from uwnetid u
+join validation source3
+  on source3.validation_id = u.validation_id
+  and u.status_code=30 and source3.source_code=3 and source3.status_code=3
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (1,2,4,6,7,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (9,12) and uwmsources.status_code=1
+where othersource.validation_id is NULL AND uwmsources.validation_id is NULL
+order by 1;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_uwm_active-services">
+    <title>Former UW Medicine users with no additional affiliations who have active subscriptions</title>
+    <gname>Former UW Medicine users with no additional affiliations who are blocked from UW computing systems with active subscriptions.</gname>
+    <desc>Personal UW NetIDs that are former UW Medicine workers and affiliates in Sailpoint with no other affiliation. Account has active services. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid from uwnetid u
+join validation source3
+  on source3.validation_id = u.validation_id
+  and u.status_code=30 and source3.source_code=3 and source3.status_code=3
+join subscription sub
+  on u.uwnetid_id = sub.uwnetid_id
+  and sub.subscription_code not in ('122','135','137','184') and sub.status_code=20
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (1,2,4,6,7,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (9,12) and uwmsources.status_code=1
+where othersource.validation_id is NULL AND uwmsources.validation_id is NULL
+order by 1;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_uwm-wd_all">
+    <title>Former UW Medicine users with 'UW MED' supervisory org in Workday</title>
+    <gname>Former UW Medicine users with 'UW MED' supervisory org in Workday who are blocked from UW computing systems.</gname>
+    <desc>Personal UW NetIDs that are former UW Medicine workers and affiliates in Sailpoint and have a UW Medicine Workday position with no other affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid from uwnetid u
+join validation source3
+  on source3.validation_id = u.validation_id
+  and u.status_code=30 and source3.source_code=3 and source3.status_code=3
+join validation wd
+  on wd.validation_id = u.validation_id
+  and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+join verify wddept
+  on wddept.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept.source_code=1 and wddept.verify_code=91 and wddept.verify_data like 'UW MED:%'
+left join verify wddept2
+  on wddept2.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept2.source_code=1 and wddept2.verify_code=91 and wddept2.verify_data not like 'UW MED:%'
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,7,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (9,12) and uwmsources.status_code=1
+left join category wdfac 
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+where
+  othersource.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wddept2.validation_id is NULL
+  AND wdfac.validation_id is NULL
+order by 1;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_uwm-wd_active-services">
+    <title>Former UW Medicine users with 'UW MED' supervisory org in Workday with subscriptions</title>
+    <gname>Former UW Medicine users with 'UW MED' supervisory org in Workday who are blocked from UW computing systems with subscriptions.</gname>
+    <desc>Personal UW NetIDs that are former UW Medicine workers and affiliates in Sailpoint and have a UW Medicine Workday position with no other affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid
+from uwnetid u
+join validation source3
+  on source3.validation_id = u.validation_id
+  and u.status_code=30 and source3.source_code=3 and source3.status_code=3
+join validation wd
+  on wd.validation_id = u.validation_id
+  and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+join verify wddept
+  on wddept.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept.source_code=1 and wddept.verify_code=91 and wddept.verify_data like 'UW MED:%'
+left join verify wddept2
+  on wddept2.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept2.source_code=1 and wddept2.verify_code=91 and wddept2.verify_data not like 'UW MED:%'
+join subscription sub
+  on u.uwnetid_id = sub.uwnetid_id
+  and sub.subscription_code not in ('60','64','77','105','107','122','135','137','184') and sub.status_code=20
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,7,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (9,12) and uwmsources.status_code=1
+left join category wdfac 
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+where
+  othersource.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wddept2.validation_id is NULL
+  AND wdfac.validation_id is NULL
+order by 1
+;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_wd-uwit_all">
+    <title>Former UW Staff users with 'UWIT' supervisory org in Workday</title>
+    <gname>Former UW Staff users with 'UWIT' supervisory org in Workday who are blocked from UW computing systems.</gname>
+    <desc>Personal UW NetIDs that have a former UWIT Workday position with no other affiliations aside from Advancement non-alumni or UW Medicine affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid
+from uwnetid u
+join validation wd
+  on wd.validation_id = u.validation_id
+  and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+join verify wddept
+  on wddept.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept.source_code=1 and wddept.verify_code=91 and wddept.verify_data like 'UWIT:%'
+left join verify wddept2
+  on wddept2.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept2.source_code=1 and wddept2.verify_code=91 and wddept2.verify_data not like 'UWIT:%'
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (3,9,12) and uwmsources.status_code=1
+left join category wdfac
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+left join category alumnicat
+  on alumnicat.validation_id = u.validation_id
+  and alumnicat.source_code=7 and alumnicat.category_code=16
+left join category prtcat
+  on prtcat.validation_id = u.validation_id
+  and prtcat.status_code=1 and prtcat.category_code in (234,235,236,237,238,239)
+where
+  othersource.validation_id is NULL
+  AND wddept2.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wdfac.validation_id is NULL
+  AND alumnicat.validation_id is NULL
+  AND prtcat.validation_id is NULL
+order by 1
+;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_wd-uwit_active-services">
+    <title>Former UW Staff users with 'UWIT' supervisory org in Workday with subscriptions</title>
+    <gname>Former UW Staff with 'UWIT' supervisory org in Workday who are who are blocked from UW computing systems with subscriptions.</gname>
+    <desc>>Personal UW NetIDs with unpermitted subscriptions that have a former UWIT Workday position with no other affiliations aside from non-alumni in Advancement or UW Medicine affiliations. This group is automatically maintained daily from UW-IT Identity Registry data. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid
+from uwnetid u
+join validation wd
+  on wd.validation_id = u.validation_id
+  and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+join verify wddept
+  on wddept.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept.source_code=1 and wddept.verify_code=91 and wddept.verify_data like 'UWIT:%'
+left join verify wddept2
+  on wddept2.validation_id = u.validation_id
+  and u.status_code=30
+  and wddept2.source_code=1 and wddept2.verify_code=91 and wddept2.verify_data not like 'UWIT:%'
+join subscription sub
+  on u.uwnetid_id = sub.uwnetid_id
+  and sub.subscription_code not in ('60','64','77','105','107','122','135','137','184') and sub.status_code=20
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (3,9,12) and uwmsources.status_code=1
+left join category wdfac
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+left join category alumnicat
+  on alumnicat.validation_id = u.validation_id
+  and alumnicat.source_code=7 and alumnicat.category_code=16
+left join category prtcat
+  on prtcat.validation_id = u.validation_id
+  and prtcat.status_code=1 and prtcat.category_code in (234,235,236,237,238,239)
+where
+  othersource.validation_id is NULL
+  AND wddept2.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wdfac.validation_id is NULL
+  AND alumnicat.validation_id is NULL
+  AND prtcat.validation_id is NULL
+order by 1
+;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_wd_all">
+    <title>Former UW staff users in Workday</title>
+    <gname>Former UW staff users in Workday who are blocked from UW computing systems.</gname>
+    <desc>Personal UW NetIDs that are former UW workers and affiliates in Workday with no other affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid
+from uwnetid u
+join validation wd
+ on wd.validation_id = u.validation_id
+ and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (3,9,12) and uwmsources.status_code=1
+left join category wdfac
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+left join category alumnicat
+  on alumnicat.validation_id = u.validation_id
+  and alumnicat.source_code=7 and alumnicat.category_code=16
+left join category prtcat
+  on prtcat.validation_id = u.validation_id
+  and prtcat.status_code=1 and prtcat.category_code in (234,235,236,237,238,239)
+where
+  othersource.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wdfac.validation_id is NULL
+  AND alumnicat.validation_id is NULL
+  AND prtcat.validation_id is NULL
+order by 1
+;</query>
+  </group>
+  <group cn="u_uwnetid_policy_expiration_wd_active-services">
+    <title>Former UW staff users in Workday with subscriptions</title>
+    <gname>Former UW staff users in Workday who are blocked from UW computing systems with subscriptions.</gname>
+    <desc>Personal UW NetIDs that are former staff workers with no other affiliations. This group is automatically maintained daily from UW-IT Identity Registry data.</desc>
+    <contact>iam-support</contact>
+    <classification>restricted</classification>
+    <memberViewers>
+         <viewer>cn="u_groups_affiliation_uwnetid-policy-read"</viewer>
+    </memberViewers>
+    <memberUpdaters>
+      <updater>dns="iam-tools-irws-watcher.cac.washington.edu"</updater>
+      <updater>dns="iamerm5.app-certs.iam.t.uw.edu"</updater>
+    </memberUpdaters>
+    <query>select distinct u.uwnetid
+from uwnetid u
+join validation wd
+ on wd.validation_id = u.validation_id
+ and u.status_code=30 and wd.source_code=1 and wd.status_code=3
+join subscription sub
+  on u.uwnetid_id = sub.uwnetid_id
+  and sub.subscription_code not in ('60','64','77','105','107','122','135','137','184') and sub.status_code=20
+left join validation othersource
+  on othersource.validation_id = u.validation_id
+  and othersource.source_code IN (2,4,6,8,10,11,19,20)
+left join validation uwmsources
+  on uwmsources.validation_id = u.validation_id
+  and uwmsources.source_code IN (3,9,12) and uwmsources.status_code=1
+left join category wdfac
+  on wdfac.validation_id = u.validation_id
+  and wdfac.source_code=1 and wdfac.category_code=5
+left join category alumnicat
+  on alumnicat.validation_id = u.validation_id
+  and alumnicat.source_code=7 and alumnicat.category_code=16
+left join category prtcat
+  on prtcat.validation_id = u.validation_id
+  and prtcat.status_code=1 and prtcat.category_code in (234,235,236,237,238,239)
+where
+  othersource.validation_id is NULL
+  AND uwmsources.validation_id is NULL
+  AND wdfac.validation_id is NULL
+  AND alumnicat.validation_id is NULL
+  AND prtcat.validation_id is NULL
+order by 1
+;</query>
+  </group>
+</groupDefs>
+>>>>>>> Stashed changes
