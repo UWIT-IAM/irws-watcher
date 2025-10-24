@@ -54,7 +54,7 @@ def parse_filter_file(filename):
             group['cn'] = e_group.attrib['cn']
             affiliation_groups.add(e_group.attrib['cn'])
             e_filter = e_group.find('.//filter')
-            if e_filter.attrib['type'] == '1':
+            if e_filter is not None and e_filter.attrib['type'] == '1':
                 group['cat-status'] = _get_values(e_filter, 'category-status')
                 group['sdb-status'] = _get_values(e_filter, 'sdb-sdb_status')
                 group['sdb-class'] = _get_values(e_filter, 'sdb-sdb_class')
@@ -62,9 +62,11 @@ def parse_filter_file(filename):
                 group['cas-dept'] = _get_values(e_filter, 'cascadia-department')
                 group['adv-status'] = _get_values(e_filter, 'advance-status_code')
                 group['adv-alum'] = _get_values(e_filter, 'advance-alumni_member')
-            affiliation_filters.append(group)
+                affiliation_filters.append(group)
+            else:
+                next
     except Exception as e:
-        raise PersonRegException(str(e))
+        raise PersonRegException(str(e), group)
 
     # logger.info('affiliation processor loaded %d filter definitions.' % (len(affiliation_filters)))
     return affiliation_filters
