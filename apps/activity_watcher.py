@@ -57,7 +57,7 @@ doing_rems = False
 doing_pacs = False
 
 #
-# Read pac.conf in a safe way
+# New function to read pac.conf in a safe way
 # reads from pac.conf
 
 def get_pac_config_setting(key: str, allow_none: bool = False, allow_empty: bool = False) -> Any:
@@ -124,6 +124,15 @@ def process_message(message):
         elif context[u'topic'] == 'uwnetid':
             if u'uwnetid' in body:
                 (adds, dels) = affiliation.process_affiliations_as_needed(body['uwnetid'], do_adds=doing_adds, do_rems=doing_rems)
+
+        #idattribute events = possible netid affiliation changes, does not deduplicate
+        elif context[u'topic'] == 'idattribute' and body[u'regid'] is not None:
+            logger.debug('idattribute %s id=%s' % (body[u'type'], body[u'regid']) )
+            irws_netid = None
+            irws_netid = irws_client.get_uwnetid(regid=body[u'regid'])
+            if irws_netid is not None:
+                (adds, dels) = affiliation.process_affiliations_as_needed(irws_netid.uwnetid, do_adds=doing_adds, do_rems=doing_rems)
+
 
     return ret
 
